@@ -141,8 +141,8 @@
 
 ```
 
-[Mobile App]   [Web Interface]   [QR Code Scanner]
-↘           ↓             ↙
+[Mobile App]   [Web Interface]
+↘           ↓
 [Digital Database]
 ↓
 [Batch Management System]
@@ -157,7 +157,7 @@
 | หมวด | ส่วนประกอบ | หน้าที่ |
 |-------|---------------------------|----------|
 | 📱 Input Interface | Mobile App / Web Form | บันทึกข้อมูลประจำวัน |
-| 🏷️ Batch Tracking | QR Code / Batch ID | ติดตาม batch แต่ละรอบ |
+| 🏷️ Batch Tracking | Batch ID | ติดตาม batch แต่ละรอบ |
 | 💾 Data Storage | PostgreSQL Database | เก็บข้อมูลแบบ structured |
 | 📊 Processing | Batch Management Engine | จัดการ timeline และ status |
 | 📋 Output | Dashboard + Reports | แสดงผลและ export ข้อมูล |
@@ -304,7 +304,7 @@ Operator เข้าระบบ → เลือก "Create New Batch"
 
 **Day 7 - บันทึกการดูแล:**
 ```
-Operator scan QR Code Batch #2025-001
+Operator เข้าระบบ → เลือก Batch #2025-001
 → เลือก "Add Daily Log"
 → กิจกรรม: เปลี่ยนน้ำ
 → ปรับค่า: EC จาก 1.4 → 1.6
@@ -383,7 +383,6 @@ Operator เข้า Batch #2025-001
 - ต้องพิจารณาการ integrate กับระบบที่มีอยู่:
   - 🔗 เชื่อมกับ Controller Gen3 (auto-populate environmental data)
   - 📊 เชื่อมกับ PFAL Efficiency Analyzer (ส่งข้อมูล yield)
-  - 🏷️ QR Code system สำหรับ batch tracking
 - **เหตุผล:** ลดการบันทึกซ้ำและเพิ่มความแม่นยำ
 
 **3. การขยายระบบสำหรับหลาย Zone**
@@ -402,9 +401,8 @@ Operator เข้า Batch #2025-001
 |-------|--------|-----------|----------|
 | 1 | UI/UX Testing | ทดสอบกับ Operators จริง เพื่อปรับปรุง usability | High |
 | 2 | Integration Planning | ออกแบบการเชื่อมต่อกับ Controller Gen3 | High |
-| 3 | QR Code System | ออกแบบ QR code สำหรับ batch tracking | Medium |
-| 4 | Multi-zone Architecture | ออกแบบสถาปัตยกรรมสำหรับหลาย zones | Medium |
-| 5 | Mobile App Development | พัฒนา native mobile app (iOS/Android) | Low |
+| 3 | Multi-zone Architecture | ออกแบบสถาปัตยกรรมสำหรับหลาย zones | Medium |
+| 4 | Mobile App Development | พัฒนา native mobile app (iOS/Android) | Low |
 
 ---
 

@@ -262,7 +262,6 @@ Generate Timeline → Compare with other batches → Export Reports
 - **Frontend**:
   - Web app (React/Vue) สำหรับ desktop
   - Mobile-responsive design
-  - QR code scanning สำหรับ batch tracking
 - **Backend**:
   - RESTful API (Node.js/Python)
   - PostgreSQL/MySQL database
