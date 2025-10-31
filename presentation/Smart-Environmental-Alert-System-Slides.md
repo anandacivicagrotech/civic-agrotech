@@ -114,7 +114,7 @@
 | เป้าหมาย | ป้องกันความเสียหายจากสภาพแวดล้อมและอุปกรณ์ผิดปกติ |
 | ข้อมูลนำเข้า | Existing Sensors (ไม่ต้องติดตั้งใหม่) |
 | การประมวลผล | Smart Alert Engine + Priority Classification |
-| การแสดงผล | LINE/Email Notifications + Alert Dashboard |
+| การแสดงผล | LINE Messaging API/Email Notifications + Alert Dashboard |
 | ผู้ใช้งาน | Operators / Maintenance Team / Management |
 
 ---
@@ -299,7 +299,7 @@
 | 📡 **Monitor** | เก็บข้อมูลจาก sensors ทุก 1 นาที<br>• Temperature, RH, PPFD, CO₂<br>• EC, pH, Water level<br>• Fan/Pump status | Real-time |
 | 🧠 **Analyze** | วิเคราะห์ด้วย Smart Logic<br>• Time-based filtering<br>• Duration checking<br>• Rate of change detection | <30 วินาที |
 | 🚨 **Alert** | จัดลำดับความสำคัญ<br>• P0 (Critical), P1 (Warning), P2 (Info)<br>• เลือก notification method | <30 วินาที |
-| 📱 **Notify** | ส่ง notification<br>• LINE message, Email<br>• Dashboard alert<br>• เลือกผู้รับตาม priority | <1 นาที |
+| 📱 **Notify** | ส่ง notification<br>• LINE Messaging API, Email<br>• Dashboard alert<br>• เลือกผู้รับตาม priority | <1 นาที |
 | ✅ **Resolve** | ติดตาม resolution<br>• Acknowledge alert<br>• Mark as resolved<br>• Log action taken | Manual |
 
 ---
@@ -369,7 +369,7 @@ Time: 14:30 PM
 - Week 3-4: พัฒนา alert logic + smart filtering + priority scoring
 
 **เดือนที่ 2: Integration & Fine-tuning**
-- Week 5-6: Dashboard + notification system (LINE, Email)
+- Week 5-6: Dashboard + notification system (LINE Messaging API, Email)
 - Week 7-8: Testing, ปรับ threshold, ลด false alarm, Presentation
 
 ---

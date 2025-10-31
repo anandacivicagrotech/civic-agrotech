@@ -492,7 +492,7 @@ Time: 14:30 PM
 - **Software**:
   - Alert engine (real-time processing)
   - Smart filtering logic
-  - Notification system (LINE API, Email SMTP)
+  - Notification system (LINE Messaging API, Email SMTP)
   - Alert dashboard & history
   - Mobile-responsive UI
 
@@ -503,12 +503,12 @@ Time: 14:30 PM
 - Week 3-4: พัฒนา alert logic + smart filtering + priority scoring
 
 **เดือนที่ 2: Integration & Fine-tuning**
-- Week 5-6: Dashboard + notification system (LINE, Email)
+- Week 5-6: Dashboard + notification system (LINE Messaging API, Email)
 - Week 7-8: Testing, ปรับ threshold, ลด false alarm, Presentation
 
 #### 💡 **Expected Outcomes**
 - **Alert system ทำงาน 24/7** แจ้งเตือนแบบเรียลไทม์
-- **Notification ผ่าน LINE/Email** ถึง operator ที่เกี่ยวข้อง
+- **Notification ผ่าน LINE Messaging API/Email** ถึง operator ที่เกี่ยวข้อง
 - **Dashboard แสดง alert history** พร้อม acknowledge/resolve
 - **Smart filtering ลด false alarm** <15%
 
@@ -725,7 +725,7 @@ Overall System Health: 87% 🟡 (1 critical, 2 warnings)
 - **Software**:
   - Health scoring algorithm
   - Predictive failure detection (ML optional)
-  - Alert routing system (LINE/Email)
+  - Alert routing system (LINE Messaging API/Email)
   - Dashboard (real-time status)
 
 #### 📈 **Timeline (2 เดือน)**

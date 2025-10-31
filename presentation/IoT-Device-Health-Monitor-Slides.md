@@ -509,7 +509,7 @@ Alert Details:
 
 📱 Notifications Sent:
 ├─ 📧 Email: maintenance@civic-agrotech.com
-├─ 📱 LINE: Maintenance Team Group
+├─ 📱 LINE Messaging API: Maintenance Team Group
 └─ 📊 Dashboard: Red alert badge
 ```
 
