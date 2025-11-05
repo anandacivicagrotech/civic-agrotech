@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Dashboard - Prototype</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card h2 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .metric-value {
+            color: #333;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .metric-value.highlight {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 15px;
+        }
+
+        .large-chart {
+            grid-column: 1 / -1;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            color: #666;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        select, input {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            border-color: #667eea;
+        }
+
+        .cost-breakdown {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .cost-item-label {
+            color: #666;
+        }
+
+        .cost-item-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .greenhouse-section {
+            margin-top: 25px;
+        }
+
+        .greenhouse-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .tab-button:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .greenhouse-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .greenhouse-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .greenhouse-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .greenhouse-card.active {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .greenhouse-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .greenhouse-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .stat-label {
+            color: #666;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .section-title {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .section-title h2 {
+            color: #333;
+            font-size: 1.4rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .greenhouse-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .greenhouse-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Production Dashboard</h1>
+            <p class="subtitle">ระบบติดตามผลผลิตและต้นทุนการผลิต</p>
+        </header>
+
+        <div class="filter-section">
+            <div class="filter-group">
+                <label for="yearFilter">ปี</label>
+                <select id="yearFilter" onchange="updateDashboard()">
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="monthFilter">เดือน</label>
+                <select id="monthFilter" onchange="updateDashboard()">
+                    <option value="all">ทั้งหมด</option>
+                    <option value="1">มกราคม</option>
+                    <option value="2">กุมภาพันธ์</option>
+                    <option value="3">มีนาคม</option>
+                    <option value="4">เมษายน</option>
+                    <option value="5">พฤษภาคม</option>
+                    <option value="6">มิถุนายน</option>
+                    <option value="7">กรกฎาคม</option>
+                    <option value="8">สิงหาคม</option>
+                    <option value="9">กันยายน</option>
+                    <option value="10">ตุลาคม</option>
+                    <option value="11" selected>พฤศจิกายน</option>
+                    <option value="12">ธันวาคม</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="vegetableFilter">ชนิดผัก</label>
+                <select id="vegetableFilter" onchange="updateDashboard()">
+                    <option value="all">ทั้งหมด</option>
+                    <option value="lettuce">ผักกาดหอม</option>
+                    <option value="kale">คะน้า</option>
+                    <option value="spinach">ผักโขม</option>
+                    <option value="basil">โหระพา</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Overview Card -->
+            <div class="card">
+                <h2>ผลผลิตรวม</h2>
+                <div class="metric">
+                    <span class="metric-label">น้ำหนักรวม</span>
+                    <span class="metric-value highlight" id="totalWeight">1,245 kg</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">จำนวนรอบปลูก</span>
+                    <span class="metric-value" id="totalBatches">24 รอบ</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">ผลผลิตเฉลี่ย/รอบ</span>
+                    <span class="metric-value" id="avgPerBatch">51.9 kg</span>
+                </div>
+            </div>
+
+            <!-- Energy Card -->
+            <div class="card">
+                <h2>การใช้พลังงาน</h2>
+                <div class="metric">
+                    <span class="metric-label">ค่าไฟรวม</span>
+                    <span class="metric-value highlight" id="totalEnergy">18,500 บาท</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">ค่าไฟต่อ kg</span>
+                    <span class="metric-value" id="energyPerKg">14.86 บาท</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">สถานะ</span>
+                    <span class="badge success">ปกติ</span>
+                </div>
+            </div>
+
+            <!-- Cost Card -->
+            <div class="card">
+                <h2>ต้นทุนการผลิต</h2>
+                <div class="metric">
+                    <span class="metric-label">ต้นทุนต่อ kg</span>
+                    <span class="metric-value highlight" id="costPerKg">45.20 บาท</span>
+                </div>
+                <div class="cost-breakdown">
+                    <div class="cost-item">
+                        <span class="cost-item-label">ค่าไฟฟ้า</span>
+                        <span class="cost-item-value" id="elecCost">14.86 บาท</span>
+                    </div>
+                    <div class="cost-item">
+                        <span class="cost-item-label">ค่าแรง</span>
+                        <span class="cost-item-value" id="laborCost">18.50 บาท</span>
+                    </div>
+                    <div class="cost-item">
+                        <span class="cost-item-label">ค่าวัสดุ</span>
+                        <span class="cost-item-value" id="materialCost">11.84 บาท</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Production Trend Chart -->
+            <div class="card large-chart">
+                <h2>แนวโน้มผลผลิต (6 เดือนล่าสุด)</h2>
+                <div class="chart-container">
+                    <canvas id="productionTrendChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Charts Grid (2 columns) -->
+        <div class="charts-grid">
+            <!-- Vegetable Breakdown Chart -->
+            <div class="card">
+                <h2>สัดส่วนผลผลิตตามชนิดผัก</h2>
+                <div class="chart-container">
+                    <canvas id="vegetablePieChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Cost Breakdown Chart -->
+            <div class="card">
+                <h2>สัดส่วนต้นทุน</h2>
+                <div class="chart-container">
+                    <canvas id="costPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Greenhouse Section -->
+        <div class="greenhouse-section">
+            <div class="section-title">
+                <h2>ข้อมูลแยกตามโรงปลูก</h2>
+            </div>
+
+            <div class="greenhouse-tabs">
+                <button class="tab-button active" onclick="showGreenhouseView('all')">ภาพรวมทั้งหมด</button>
+                <button class="tab-button" onclick="showGreenhouseView('individual')">รายโรงปลูก</button>
+            </div>
+
+            <div id="greenhouseViewAll" class="greenhouse-grid">
+                <!-- Greenhouse cards will be dynamically generated -->
+            </div>
+
+            <div id="greenhouseViewIndividual" style="display: none;">
+                <div id="greenhouseSelector">
+                    <div class="section-title" style="margin-bottom: 20px;">
+                        <h3 style="margin: 0; font-size: 1.1rem; color: #666;">เลือกโรงปลูกที่ต้องการดูรายละเอียด</h3>
+                    </div>
+
+                    <div class="greenhouse-grid" id="greenhouseSelectorCards" style="margin-bottom: 25px;">
+                        <!-- Individual greenhouse cards for selection -->
+                    </div>
+                </div>
+
+                <div id="selectedGreenhouseData" style="display: none;">
+                    <div style="margin-bottom: 20px;">
+                        <button class="tab-button" onclick="backToGreenhouseList()" style="display: inline-flex; align-items: center; gap: 8px;">
+                            <span>←</span> กลับไปเลือกโรงปลูก
+                        </button>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <h2 id="selectedGreenhouseName">โรงปลูก</h2>
+                            <div id="selectedGreenhouseDetails"></div>
+                        </div>
+                        <div class="card">
+                            <h2>ข้อมูลค่าไฟ (IoT)</h2>
+                            <div id="greenhouseEnergyDetails"></div>
+                        </div>
+                        <div class="card">
+                            <h2>ผลผลิตในโรงปลูก</h2>
+                            <div class="chart-container">
+                                <canvas id="greenhouseCropChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data
+        const mockData = {
+            production: {
+                totalWeight: 1245,
+                crops: 24,
+                energyCost: 18500,
+                laborCost: 23040,
+                materialCost: 14750
+            },
+            monthlyTrend: [
+                { month: 'มิ.ย.', weight: 980, crops: 20 },
+                { month: 'ก.ค.', weight: 1050, crops: 21 },
+                { month: 'ส.ค.', weight: 1120, crops: 22 },
+                { month: 'ก.ย.', weight: 1180, crops: 23 },
+                { month: 'ต.ค.', weight: 1200, crops: 24 },
+                { month: 'พ.ย.', weight: 1245, crops: 24 }
+            ],
+            vegetables: [
+                { name: 'ผักกาดหอม', weight: 450, color: '#4CAF50' },
+                { name: 'คะน้า', weight: 380, color: '#2196F3' },
+                { name: 'ผักโขม', weight: 280, color: '#FF9800' },
+                { name: 'โหระพา', weight: 135, color: '#9C27B0' }
+            ],
+            greenhouses: [
+                {
+                    id: 'gh1',
+                    name: 'โรงปลูกที่ 1',
+                    production: 425,
+                    crops: 8,
+                    energyUsage: 6200, // kWh (from IoT)
+                    energyCost: 6200, // บาท
+                    status: 'active',
+                    currentCrops: [
+                        { name: 'ผักกาดหอม', weight: 180 },
+                        { name: 'คะน้า', weight: 150 },
+                        { name: 'ผักโขม', weight: 95 }
+                    ]
+                },
+                {
+                    id: 'gh2',
+                    name: 'โรงปลูกที่ 2',
+                    production: 390,
+                    crops: 8,
+                    energyUsage: 5800,
+                    energyCost: 5800,
+                    status: 'active',
+                    currentCrops: [
+                        { name: 'ผักกาดหอม', weight: 160 },
+                        { name: 'คะน้า', weight: 140 },
+                        { name: 'โหระพา', weight: 90 }
+                    ]
+                },
+                {
+                    id: 'gh3',
+                    name: 'โรงปลูกที่ 3',
+                    production: 430,
+                    crops: 8,
+                    energyUsage: 6500,
+                    energyCost: 6500,
+                    status: 'active',
+                    currentCrops: [
+                        { name: 'ผักกาดหอม', weight: 110 },
+                        { name: 'คะน้า', weight: 90 },
+                        { name: 'ผักโขม', weight: 185 },
+                        { name: 'โหระพา', weight: 45 }
+                    ]
+                }
+            ]
+        };
+
+        let charts = {};
+
+        function initCharts() {
+            // Production Trend Chart
+            const trendCtx = document.getElementById('productionTrendChart').getContext('2d');
+            charts.productionTrend = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: mockData.monthlyTrend.map(d => d.month),
+                    datasets: [{
+                        label: 'น้ำหนักผลผลิต (kg)',
+                        data: mockData.monthlyTrend.map(d => d.weight),
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' kg';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Vegetable Pie Chart
+            const vegCtx = document.getElementById('vegetablePieChart').getContext('2d');
+            charts.vegetablePie = new Chart(vegCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: mockData.vegetables.map(v => v.name),
+                    datasets: [{
+                        data: mockData.vegetables.map(v => v.weight),
+                        backgroundColor: mockData.vegetables.map(v => v.color)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Cost Breakdown Chart
+            const costCtx = document.getElementById('costPieChart').getContext('2d');
+            charts.costPie = new Chart(costCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['ค่าไฟฟ้า', 'ค่าแรง', 'ค่าวัสดุ'],
+                    datasets: [{
+                        data: [
+                            mockData.production.energyCost,
+                            mockData.production.laborCost,
+                            mockData.production.materialCost
+                        ],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed.toLocaleString() + ' บาท';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateMetrics() {
+            const totalWeight = mockData.production.totalWeight;
+            const crops = mockData.production.crops;
+            const totalCost = mockData.production.energyCost +
+                             mockData.production.laborCost +
+                             mockData.production.materialCost;
+
+            document.getElementById('totalWeight').textContent = totalWeight.toLocaleString() + ' kg';
+            document.getElementById('totalBatches').textContent = crops + ' รอบ';
+            document.getElementById('avgPerBatch').textContent = (totalWeight / crops).toFixed(1) + ' kg';
+
+            document.getElementById('totalEnergy').textContent = mockData.production.energyCost.toLocaleString() + ' บาท';
+            document.getElementById('energyPerKg').textContent = (mockData.production.energyCost / totalWeight).toFixed(2) + ' บาท';
+
+            const costPerKg = totalCost / totalWeight;
+            document.getElementById('costPerKg').textContent = costPerKg.toFixed(2) + ' บาท';
+            document.getElementById('elecCost').textContent = (mockData.production.energyCost / totalWeight).toFixed(2) + ' บาท';
+            document.getElementById('laborCost').textContent = (mockData.production.laborCost / totalWeight).toFixed(2) + ' บาท';
+            document.getElementById('materialCost').textContent = (mockData.production.materialCost / totalWeight).toFixed(2) + ' บาท';
+        }
+
+        function updateDashboard() {
+            // In a real app, this would fetch filtered data
+            console.log('Filters updated:', {
+                year: document.getElementById('yearFilter').value,
+                month: document.getElementById('monthFilter').value,
+                vegetable: document.getElementById('vegetableFilter').value
+            });
+
+            // For now, just update with the same data
+            updateMetrics();
+        }
+
+        let selectedGreenhouse = null;
+
+        function renderGreenhouseCards() {
+            const container = document.getElementById('greenhouseViewAll');
+            const selectorContainer = document.getElementById('greenhouseSelectorCards');
+
+            let allCardsHTML = '';
+            let selectorCardsHTML = '';
+
+            mockData.greenhouses.forEach(gh => {
+                const avgPerCrop = (gh.production / gh.crops).toFixed(1);
+                const energyPerKg = (gh.energyCost / gh.production).toFixed(2);
+
+                // Card for "All View" - can switch to individual view
+                const allViewCardHTML = `
+                    <div class="greenhouse-card" onclick="selectGreenhouse('${gh.id}', true)">
+                        <div class="greenhouse-name">
+                            ${gh.name}
+                        </div>
+                        <div class="greenhouse-stats">
+                            <div class="stat-row">
+                                <span class="stat-label">ผลผลิตรวม</span>
+                                <span class="stat-value">${gh.production} kg</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">จำนวนรอบปลูก</span>
+                                <span class="stat-value">${gh.crops} รอบ</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">ค่าไฟ (IoT)</span>
+                                <span class="stat-value">${gh.energyUsage.toLocaleString()} kWh</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">ค่าไฟต่อ kg</span>
+                                <span class="stat-value">${energyPerKg} บาท</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Card for "Individual View" - just selects without switching view
+                const selectorCardHTML = `
+                    <div class="greenhouse-card" onclick="selectGreenhouse('${gh.id}', false)">
+                        <div class="greenhouse-name">
+                            ${gh.name}
+                        </div>
+                        <div class="greenhouse-stats">
+                            <div class="stat-row">
+                                <span class="stat-label">ผลผลิตรวม</span>
+                                <span class="stat-value">${gh.production} kg</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">จำนวนรอบปลูก</span>
+                                <span class="stat-value">${gh.crops} รอบ</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">ค่าไฟ (IoT)</span>
+                                <span class="stat-value">${gh.energyUsage.toLocaleString()} kWh</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">ค่าไฟต่อ kg</span>
+                                <span class="stat-value">${energyPerKg} บาท</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                allCardsHTML += allViewCardHTML;
+                selectorCardsHTML += selectorCardHTML;
+            });
+
+            container.innerHTML = allCardsHTML;
+            selectorContainer.innerHTML = selectorCardsHTML;
+        }
+
+        function showGreenhouseView(view) {
+            const allView = document.getElementById('greenhouseViewAll');
+            const individualView = document.getElementById('greenhouseViewIndividual');
+            const tabs = document.querySelectorAll('.greenhouse-tabs .tab-button');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            if (view === 'all') {
+                allView.style.display = 'grid';
+                individualView.style.display = 'none';
+                tabs[0].classList.add('active');
+
+                // Reset individual view
+                document.getElementById('selectedGreenhouseData').style.display = 'none';
+                document.getElementById('greenhouseSelector').style.display = 'block';
+                selectedGreenhouse = null;
+            } else {
+                allView.style.display = 'none';
+                individualView.style.display = 'block';
+                tabs[1].classList.add('active');
+
+                // Show selector by default when switching to individual view
+                document.getElementById('selectedGreenhouseData').style.display = 'none';
+                document.getElementById('greenhouseSelector').style.display = 'block';
+            }
+        }
+
+        function selectGreenhouse(ghId, switchView = false) {
+            selectedGreenhouse = mockData.greenhouses.find(gh => gh.id === ghId);
+
+            if (!selectedGreenhouse) return;
+
+            // Hide selector and show data section
+            document.getElementById('greenhouseSelector').style.display = 'none';
+            document.getElementById('selectedGreenhouseData').style.display = 'block';
+
+            // Update selected greenhouse name
+            document.getElementById('selectedGreenhouseName').innerHTML = selectedGreenhouse.name;
+
+            // Update details
+            const avgPerCrop = (selectedGreenhouse.production / selectedGreenhouse.crops).toFixed(1);
+            const energyPerKg = (selectedGreenhouse.energyCost / selectedGreenhouse.production).toFixed(2);
+
+            document.getElementById('selectedGreenhouseDetails').innerHTML = `
+                <div class="metric">
+                    <span class="metric-label">ผลผลิตรวม</span>
+                    <span class="metric-value">${selectedGreenhouse.production} kg</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">จำนวนรอบปลูก</span>
+                    <span class="metric-value">${selectedGreenhouse.crops} รอบ</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">ผลผลิตเฉลี่ย/รอบ</span>
+                    <span class="metric-value">${avgPerCrop} kg</span>
+                </div>
+            `;
+
+            // Update energy details (from IoT)
+            document.getElementById('greenhouseEnergyDetails').innerHTML = `
+                <div class="metric">
+                    <span class="metric-label">การใช้ไฟฟ้า (IoT)</span>
+                    <span class="metric-value highlight">${selectedGreenhouse.energyUsage.toLocaleString()} kWh</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">ค่าไฟรวม</span>
+                    <span class="metric-value">${selectedGreenhouse.energyCost.toLocaleString()} บาท</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">ค่าไฟต่อ kg</span>
+                    <span class="metric-value">${energyPerKg} บาท</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">สถานะ</span>
+                    <span class="badge success">ทำงานปกติ</span>
+                </div>
+            `;
+
+            // Update crop chart for this greenhouse
+            updateGreenhouseCropChart();
+
+            // Switch to individual view if requested
+            if (switchView) {
+                showGreenhouseView('individual');
+            }
+        }
+
+        function backToGreenhouseList() {
+            // Hide data section and show selector
+            document.getElementById('selectedGreenhouseData').style.display = 'none';
+            document.getElementById('greenhouseSelector').style.display = 'block';
+            selectedGreenhouse = null;
+        }
+
+        function updateGreenhouseCropChart() {
+            if (!selectedGreenhouse) return;
+
+            const ctx = document.getElementById('greenhouseCropChart').getContext('2d');
+
+            // Destroy existing chart if it exists
+            if (charts.greenhouseCrop) {
+                charts.greenhouseCrop.destroy();
+            }
+
+            const colors = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0'];
+
+            charts.greenhouseCrop = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: selectedGreenhouse.currentCrops.map(c => c.name),
+                    datasets: [{
+                        label: 'น้ำหนัก (kg)',
+                        data: selectedGreenhouse.currentCrops.map(c => c.weight),
+                        backgroundColor: colors.slice(0, selectedGreenhouse.currentCrops.length)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' kg';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            initCharts();
+            updateMetrics();
+            renderGreenhouseCards();
+        });
+    </script>
+</body>
+</html>
