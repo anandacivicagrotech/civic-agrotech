@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Test Dashboard</h1>
+    <div id="totalWeight">Loading...</div>
+    <div id="totalBatches">Loading...</div>
+
+    <script>
+        const mockData = {
+            production: {
+                totalWeight: 1245,
+                crops: 24,
+                energyCost: 18500
+            }
+        };
+
+        window.addEventListener('load', () => {
+            console.log('Page loaded!');
+            console.log('mockData:', mockData);
+
+            const totalWeight = mockData.production.totalWeight;
+            const crops = mockData.production.crops;
+
+            document.getElementById('totalWeight').textContent = totalWeight.toLocaleString() + ' kg';
+            document.getElementById('totalBatches').textContent = crops + ' รอบ';
+
+            console.log('Data updated successfully');
+        });
+    </script>
+</body>
+</html>

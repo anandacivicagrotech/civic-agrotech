@@ -265,6 +265,41 @@
             background: #f8f9ff;
         }
 
+        .greenhouse-summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #e0e0e0;
+            position: relative;
+        }
+
+        .greenhouse-summary-card::after {
+            content: '→';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #667eea;
+            opacity: 0;
+            transition: opacity 0.3s, right 0.3s;
+        }
+
+        .greenhouse-summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .greenhouse-summary-card:hover::after {
+            opacity: 1;
+            right: 15px;
+        }
+
         .greenhouse-name {
             font-size: 1.1rem;
             font-weight: bold;
@@ -349,6 +384,135 @@
                 align-items: stretch;
             }
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 3% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .close {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
     </style>
 </head>
 <body>
@@ -395,6 +559,9 @@
                     <option value="basil">โหระพา</option>
                 </select>
             </div>
+            <button onclick="openInputModal()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; white-space: nowrap;">
+                📝 บันทึกผลผลิต
+            </button>
         </div>
 
         <div class="dashboard-grid">
@@ -427,31 +594,17 @@
                     <span class="metric-value" id="energyPerKg">14.86 บาท</span>
                 </div>
                 <div class="metric">
-                    <span class="metric-label">สถานะ</span>
-                    <span class="badge success">ปกติ</span>
+                    <span class="metric-label">พลังงานรวม (IoT)</span>
+                    <span class="metric-value" id="totalKwh">3,364 kWh</span>
                 </div>
             </div>
 
-            <!-- Cost Card -->
+            <!-- Efficiency Card -->
             <div class="card">
-                <h2>ต้นทุนการผลิต</h2>
+                <h2>ประสิทธิภาพพลังงาน</h2>
                 <div class="metric">
-                    <span class="metric-label">ต้นทุนต่อ kg</span>
-                    <span class="metric-value highlight" id="costPerKg">45.20 บาท</span>
-                </div>
-                <div class="cost-breakdown">
-                    <div class="cost-item">
-                        <span class="cost-item-label">ค่าไฟฟ้า</span>
-                        <span class="cost-item-value" id="elecCost">14.86 บาท</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-item-label">ค่าแรง</span>
-                        <span class="cost-item-value" id="laborCost">18.50 บาท</span>
-                    </div>
-                    <div class="cost-item">
-                        <span class="cost-item-label">ค่าวัสดุ</span>
-                        <span class="cost-item-value" id="materialCost">11.84 บาท</span>
-                    </div>
+                    <span class="metric-label">พลังงานต่อ kg</span>
+                    <span class="metric-value highlight" id="kwhPerKg">2.70 kWh/kg</span>
                 </div>
             </div>
 
@@ -465,22 +618,37 @@
 
         </div>
 
-        <!-- Charts Grid (2 columns) -->
-        <div class="charts-grid">
-            <!-- Vegetable Breakdown Chart -->
-            <div class="card">
-                <h2>สัดส่วนผลผลิตตามชนิดผัก</h2>
+        <!-- Charts Grid (1 column) -->
+        <div class="card" style="margin-bottom: 25px;">
+            <h2>สัดส่วนผลผลิตและต้นทุนพลังงานแต่ละชนิดผัก</h2>
+            <div class="charts-grid">
                 <div class="chart-container">
                     <canvas id="vegetablePieChart"></canvas>
                 </div>
-            </div>
-
-            <!-- Cost Breakdown Chart -->
-            <div class="card">
-                <h2>สัดส่วนต้นทุน</h2>
                 <div class="chart-container">
                     <canvas id="costPieChart"></canvas>
                 </div>
+            </div>
+        </div>
+
+        <!-- Vegetable Cost Detail Table -->
+        <div class="card" style="margin-bottom: 25px;">
+            <h2>รายละเอียดการใช้พลังงานแต่ละชนิดผัก</h2>
+            <div style="overflow-x: auto; margin-top: 15px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #e0e0e0;">
+                            <th style="text-align: left; padding: 12px; color: #666; font-weight: 600;">ชนิดผัก</th>
+                            <th style="text-align: right; padding: 12px; color: #666; font-weight: 600;">ผลผลิต (kg)</th>
+                            <th style="text-align: right; padding: 12px; color: #666; font-weight: 600;">พลังงาน (kWh)</th>
+                            <th style="text-align: right; padding: 12px; color: #666; font-weight: 600;">พลังงาน (kWh/kg)</th>
+                            <th style="text-align: right; padding: 12px; color: #666; font-weight: 600;">ค่าไฟ (฿/kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vegetableCostTableBody">
+                        <!-- จะถูก render โดย JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -488,49 +656,81 @@
         <div class="greenhouse-section">
             <div class="section-title">
                 <h2>ข้อมูลแยกตามโรงปลูก</h2>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 8px;">คลิกที่การ์ดเพื่อดูรายละเอียดของแต่ละโรงเรือน</p>
             </div>
 
-            <div class="greenhouse-tabs">
-                <button class="tab-button active" onclick="showGreenhouseView('all')">ภาพรวมทั้งหมด</button>
-                <button class="tab-button" onclick="showGreenhouseView('individual')">รายโรงปลูก</button>
-            </div>
-
-            <div id="greenhouseViewAll" class="greenhouse-grid">
-                <!-- Greenhouse cards will be dynamically generated -->
-            </div>
-
-            <div id="greenhouseViewIndividual" style="display: none;">
-                <div id="greenhouseSelector">
-                    <div class="section-title" style="margin-bottom: 20px;">
-                        <h3 style="margin: 0; font-size: 1.1rem; color: #666;">เลือกโรงปลูกที่ต้องการดูรายละเอียด</h3>
-                    </div>
-
-                    <div class="greenhouse-grid" id="greenhouseSelectorCards" style="margin-bottom: 25px;">
-                        <!-- Individual greenhouse cards for selection -->
-                    </div>
+            <!-- Greenhouse Summary Cards -->
+            <div class="greenhouse-grid" id="greenhouseSummaryContainer" style="margin-bottom: 25px;">
+                <div id="gh1-summary" class="greenhouse-summary-card">
+                    <!-- Will be populated by JS -->
                 </div>
+                <div id="gh2-summary" class="greenhouse-summary-card">
+                    <!-- Will be populated by JS -->
+                </div>
+                <div id="gh3-summary" class="greenhouse-summary-card">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
 
-                <div id="selectedGreenhouseData" style="display: none;">
-                    <div style="margin-bottom: 20px;">
-                        <button class="tab-button" onclick="backToGreenhouseList()" style="display: inline-flex; align-items: center; gap: 8px;">
-                            <span>←</span> กลับไปเลือกโรงปลูก
+            <!-- Individual Greenhouse Dashboard -->
+            <div id="greenhouseDetailView">
+                <div style="margin-bottom: 20px;">
+                    <button class="tab-button" onclick="backToOverview()" style="display: inline-flex; align-items: center; gap: 8px;">
+                        <span>←</span> กลับสู่ภาพรวม
                         </button>
                     </div>
 
-                    <div class="dashboard-grid">
+                </div>
+
+                <!-- Individual Greenhouse Dashboard Content -->
+                <div id="greenhouseDetailContent" style="display: none;">
+                    <h2 id="selectedGreenhouseName" style="margin-bottom: 20px;">โรงเรือน 1</h2>
+
+                    <!-- Metrics -->
+                    <div class="dashboard-grid" style="margin-bottom: 25px;">
                         <div class="card">
-                            <h2 id="selectedGreenhouseName">โรงปลูก</h2>
-                            <div id="selectedGreenhouseDetails"></div>
+                            <h2>ผลผลิต</h2>
+                            <div id="ghDetailProduction"></div>
                         </div>
                         <div class="card">
-                            <h2>ข้อมูลค่าไฟ (IoT)</h2>
-                            <div id="greenhouseEnergyDetails"></div>
+                            <h2>พลังงาน (IoT)</h2>
+                            <div id="ghDetailEnergy"></div>
                         </div>
                         <div class="card">
-                            <h2>ผลผลิตในโรงปลูก</h2>
-                            <div class="chart-container">
-                                <canvas id="greenhouseCropChart"></canvas>
-                            </div>
+                            <h2>ประสิทธิภาพ</h2>
+                            <div id="ghDetailEfficiency"></div>
+                        </div>
+                    </div>
+
+                    <!-- Crop Chart -->
+                    <div class="card" style="margin-bottom: 25px;">
+                        <h2>สัดส่วนผลผลิตในโรงเรือน</h2>
+                        <div class="chart-container">
+                            <canvas id="greenhouseCropChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Harvest Records Table -->
+                    <div class="card">
+                        <h2>รายการบันทึกการเก็บเกี่ยว</h2>
+                        <div style="overflow-x: auto; margin-top: 15px;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f5f5f5; border-bottom: 2px solid #ddd;">
+                                        <th style="padding: 12px; text-align: left;">วันที่เก็บเกี่ยว</th>
+                                        <th style="padding: 12px; text-align: left;">ชนิดผัก</th>
+                                        <th style="padding: 12px; text-align: right;">น้ำหนัก (kg)</th>
+                                        <th style="padding: 12px; text-align: right;">ถาด</th>
+                                        <th style="padding: 12px; text-align: right;">พื้นที่ (ตร.ม.)</th>
+                                        <th style="padding: 12px; text-align: right;">จำนวนวัน</th>
+                                        <th style="padding: 12px; text-align: right;">kWh</th>
+                                        <th style="padding: 12px; text-align: right;">kWh/kg</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="harvestRecordsTable">
+                                    <!-- Will be populated by JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -538,7 +738,123 @@
         </div>
     </div>
 
+    <!-- Input Modal -->
+    <div id="inputModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 บันทึกผลผลิต</h2>
+                <span class="close" onclick="closeInputModal()">&times;</span>
+            </div>
+            <form id="productionForm" onsubmit="submitProduction(event)">
+                <div class="form-group">
+                    <label for="harvestDate">วันที่เก็บเกี่ยว *</label>
+                    <input type="date" id="harvestDate" required oninput="calculateEnergy()">
+                </div>
+                <div class="form-group">
+                    <label for="greenhouse">โรงเรือน *</label>
+                    <select id="greenhouse" required>
+                        <option value="">-- เลือกโรงเรือน --</option>
+                        <option value="gh1">โรงปลูกที่ 1</option>
+                        <option value="gh2">โรงปลูกที่ 2</option>
+                        <option value="gh3">โรงปลูกที่ 3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="trayType">ประเภทถาด *</label>
+                    <select id="trayType" required onchange="updateTrayInfo()">
+                        <option value="">-- เลือกประเภทถาด --</option>
+                        <option value="standard">Hydroponic Tray 112×65 cm (0.73 ตร.ม., 24 หลุม)</option>
+                        <option value="nft2m">Hydroponic Tray 2m NFT/DFT (2.66 ตร.ม., 100 หลุม)</option>
+                        <option value="ebb2m">Ebb & Flow Tray 2m (2.60 ตร.ม., 100 หลุม)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="trayCount">จำนวนถาด *</label>
+                    <input type="number" id="trayCount" min="1" required placeholder="เช่น 30" oninput="updateTrayInfo()">
+                    <small style="color: #999; font-size: 0.85rem; margin-top: 4px; display: block;">จำนวนถาดทั้งหมดที่เก็บเกี่ยว</small>
+                </div>
+                <div class="form-group">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <input type="checkbox" id="fullHoles" checked onchange="toggleHolesInput()" style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer;">
+                        <label for="fullHoles" style="margin: 0; cursor: pointer;">ปลูกเต็มหลุม</label>
+                    </div>
+                    <div id="holesInputGroup" style="display: none;">
+                        <label for="holesUsed">จำนวนหลุมที่ใช้ *</label>
+                        <input type="number" id="holesUsed" min="1" placeholder="เช่น 2400" oninput="updateTrayInfo()">
+                        <small style="color: #999; font-size: 0.85rem; margin-top: 4px; display: block;">จำนวนหลุมที่ปลูกจริง</small>
+                    </div>
+                </div>
+                <div class="form-group" style="background: #f5f5f5; padding: 12px; border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: #666; font-size: 0.9rem;">พื้นที่รวม:</span>
+                        <span id="totalArea" style="color: #667eea; font-weight: 600;">-- ตร.ม.</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: #666; font-size: 0.9rem;">จำนวนหลุมรวม:</span>
+                        <span id="totalHoles" style="color: #667eea; font-weight: 600;">-- หลุม</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #666; font-size: 0.9rem;">พื้นที่จริงที่ใช้:</span>
+                        <span id="actualArea" style="color: #4CAF50; font-weight: 600;">-- ตร.ม.</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="vegetableType">ชนิดผัก *</label>
+                    <select id="vegetableType" required>
+                        <option value="">-- เลือกชนิดผัก --</option>
+                        <option value="lettuce">ผักกาดหอม</option>
+                        <option value="kale">คะน้า</option>
+                        <option value="spinach">ผักโขม</option>
+                        <option value="basil">โหระพา</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="weight">น้ำหนักที่เก็บได้ (kg) *</label>
+                    <input type="number" id="weight" step="0.1" min="0" required placeholder="เช่น 45.5" oninput="calculateEnergy()">
+                </div>
+                <div class="form-group">
+                    <label for="plantDate">วันที่เริ่มปลูก *</label>
+                    <input type="date" id="plantDate" required oninput="calculateEnergy()">
+                </div>
+                <div id="energyPreview" class="form-group" style="background: #fff3cd; padding: 12px; border-radius: 8px; border-left: 4px solid #ffc107; display: none;">
+                    <h4 style="margin: 0 0 8px 0; font-size: 0.95rem; color: #856404;">ประมาณการพลังงาน</h4>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: #666; font-size: 0.9rem;">จำนวนวันปลูก:</span>
+                        <span id="previewGrowthDays" style="color: #856404; font-weight: 600;">-- วัน</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: #666; font-size: 0.9rem;">ใช้ไฟรวม:</span>
+                        <span id="previewTotalEnergy" style="color: #856404; font-weight: 600;">-- kWh</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="color: #666; font-size: 0.9rem;">ประสิทธิภาพ:</span>
+                        <span id="previewKwhPerKg" style="color: #856404; font-weight: 600;">-- kWh/kg</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #666; font-size: 0.9rem;">ผลผลิตต่อหน่วย:</span>
+                        <span id="previewKgPerKwh" style="color: #856404; font-weight: 600;">-- kg/kWh</span>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeInputModal()">ยกเลิก</button>
+                    <button type="submit" class="btn btn-primary">บันทึก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        // Global variables
+        let charts = {};
+        let selectedGreenhouse = null;
+
+        // Tray specifications (used by multiple functions)
+        const traySpecs = {
+            standard: { area: 0.73, holes: 24, name: 'Hydroponic Tray 112×65 cm' },
+            nft2m: { area: 2.66, holes: 100, name: 'Hydroponic Tray 2m NFT/DFT' },
+            ebb2m: { area: 2.60, holes: 100, name: 'Ebb & Flow Tray 2m' }
+        };
+
         // Mock Data
         const mockData = {
             production: {
@@ -557,10 +873,46 @@
                 { month: 'พ.ย.', weight: 1245, crops: 24 }
             ],
             vegetables: [
-                { name: 'ผักกาดหอม', weight: 450, color: '#4CAF50' },
-                { name: 'คะน้า', weight: 380, color: '#2196F3' },
-                { name: 'ผักโขม', weight: 280, color: '#FF9800' },
-                { name: 'โหระพา', weight: 135, color: '#9C27B0' }
+                {
+                    name: 'ผักกาดหอม',
+                    weight: 450,
+                    color: '#4CAF50',
+                    trayType: 'nft2m',
+                    trayCount: 30,
+                    fullHoles: true,
+                    holesUsed: 3000,
+                    growthDays: 35
+                },
+                {
+                    name: 'คะน้า',
+                    weight: 380,
+                    color: '#2196F3',
+                    trayType: 'nft2m',
+                    trayCount: 25,
+                    fullHoles: true,
+                    holesUsed: 2500,
+                    growthDays: 30
+                },
+                {
+                    name: 'ผักโขม',
+                    weight: 280,
+                    color: '#FF9800',
+                    trayType: 'standard',
+                    trayCount: 30,
+                    fullHoles: false,
+                    holesUsed: 600,
+                    growthDays: 25
+                },
+                {
+                    name: 'โหระพา',
+                    weight: 135,
+                    color: '#9C27B0',
+                    trayType: 'standard',
+                    trayCount: 20,
+                    fullHoles: true,
+                    holesUsed: 480,
+                    growthDays: 28
+                }
             ],
             greenhouses: [
                 {
@@ -572,9 +924,39 @@
                     energyCost: 6200, // บาท
                     status: 'active',
                     currentCrops: [
-                        { name: 'ผักกาดหอม', weight: 180 },
-                        { name: 'คะน้า', weight: 150 },
-                        { name: 'ผักโขม', weight: 95 }
+                        {
+                            name: 'ผักกาดหอม',
+                            weight: 180,
+                            trayType: 'nft2m',
+                            trayCount: 12,
+                            fullHoles: true,
+                            holesUsed: 1200,
+                            growthDays: 35,
+                            plantDate: '2024-11-01',
+                            harvestDate: '2024-12-06'
+                        },
+                        {
+                            name: 'คะน้า',
+                            weight: 150,
+                            trayType: 'nft2m',
+                            trayCount: 10,
+                            fullHoles: true,
+                            holesUsed: 1000,
+                            growthDays: 30,
+                            plantDate: '2024-11-06',
+                            harvestDate: '2024-12-06'
+                        },
+                        {
+                            name: 'ผักโขม',
+                            weight: 95,
+                            trayType: 'standard',
+                            trayCount: 15,
+                            fullHoles: false,
+                            holesUsed: 300,
+                            growthDays: 25,
+                            plantDate: '2024-11-11',
+                            harvestDate: '2024-12-06'
+                        }
                     ]
                 },
                 {
@@ -586,9 +968,39 @@
                     energyCost: 5800,
                     status: 'active',
                     currentCrops: [
-                        { name: 'ผักกาดหอม', weight: 160 },
-                        { name: 'คะน้า', weight: 140 },
-                        { name: 'โหระพา', weight: 90 }
+                        {
+                            name: 'ผักกาดหอม',
+                            weight: 160,
+                            trayType: 'nft2m',
+                            trayCount: 10,
+                            fullHoles: true,
+                            holesUsed: 1000,
+                            growthDays: 35,
+                            plantDate: '2024-11-01',
+                            harvestDate: '2024-12-06'
+                        },
+                        {
+                            name: 'คะน้า',
+                            weight: 140,
+                            trayType: 'nft2m',
+                            trayCount: 9,
+                            fullHoles: true,
+                            holesUsed: 900,
+                            growthDays: 30,
+                            plantDate: '2024-11-06',
+                            harvestDate: '2024-12-06'
+                        },
+                        {
+                            name: 'โหระพา',
+                            weight: 90,
+                            trayType: 'standard',
+                            trayCount: 12,
+                            fullHoles: true,
+                            holesUsed: 288,
+                            growthDays: 28,
+                            plantDate: '2024-11-08',
+                            harvestDate: '2024-12-06'
+                        }
                     ]
                 },
                 {
@@ -600,18 +1012,116 @@
                     energyCost: 6500,
                     status: 'active',
                     currentCrops: [
-                        { name: 'ผักกาดหอม', weight: 110 },
-                        { name: 'คะน้า', weight: 90 },
-                        { name: 'ผักโขม', weight: 185 },
-                        { name: 'โหระพา', weight: 45 }
+                        {
+                            name: 'ผักกาดหอม',
+                            weight: 110,
+                            trayType: 'nft2m',
+                            trayCount: 8,
+                            fullHoles: true,
+                            holesUsed: 800,
+                            growthDays: 35,
+                            plantDate: '2024-11-01',
+                            harvestDate: '2024-12-06'
+                        },
+                        {
+                            name: 'คะน้า',
+                            weight: 90,
+                            trayType: 'nft2m',
+                            trayCount: 6,
+                            fullHoles: true,
+                            holesUsed: 600,
+                            growthDays: 30,
+                            plantDate: '2024-11-06',
+                            harvestDate: '2024-12-06'
+                        },
+                        {
+                            name: 'ผักโขม',
+                            weight: 185,
+                            trayType: 'standard',
+                            trayCount: 15,
+                            fullHoles: false,
+                            holesUsed: 300,
+                            growthDays: 25,
+                            plantDate: '2024-11-11',
+                            harvestDate: '2024-12-06'
+                        },
+                        {
+                            name: 'โหระพา',
+                            weight: 45,
+                            trayType: 'standard',
+                            trayCount: 8,
+                            fullHoles: true,
+                            holesUsed: 192,
+                            growthDays: 28,
+                            plantDate: '2024-11-08',
+                            harvestDate: '2024-12-06'
+                        }
                     ]
                 }
             ]
         };
 
-        let charts = {};
+        // ฟังก์ชันคำนวณต้นทุนพลังงานแต่ละชนิดผัก (Area-Time Based Allocation)
+        function calculateEnergyCostPerVegetable() {
+            const totalEnergyCost = mockData.production.energyCost; // 18,500 บาท
+            const electricityRate = 5.5; // ฿/kWh (สมมติ)
+            const totalEnergyKwh = totalEnergyCost / electricityRate; // kWh
+
+            // คำนวณ Area-Time Units ของแต่ละผัก
+            const areaTimeUnits = mockData.vegetables.map(v => {
+                const spec = traySpecs[v.trayType];
+                const totalArea = spec.area * v.trayCount;
+                const totalHoles = spec.holes * v.trayCount;
+
+                // Calculate actual area based on holes used
+                let actualArea = totalArea;
+                if (!v.fullHoles && v.holesUsed < totalHoles) {
+                    actualArea = (v.holesUsed / totalHoles) * totalArea;
+                }
+
+                return {
+                    name: v.name,
+                    color: v.color,
+                    weight: v.weight,
+                    trayType: v.trayType,
+                    trayCount: v.trayCount,
+                    area: actualArea,
+                    growthDays: v.growthDays,
+                    areaTime: actualArea * v.growthDays
+                };
+            });
+
+            // คำนวณ Total Area-Time Units
+            const totalAreaTime = areaTimeUnits.reduce((sum, v) => sum + v.areaTime, 0);
+
+            // จัดสรรต้นทุนพลังงาน
+            const allocatedCosts = areaTimeUnits.map(v => ({
+                name: v.name,
+                color: v.color,
+                weight: v.weight,
+                area: v.area,
+                growthDays: v.growthDays,
+                areaTime: v.areaTime,
+                ratio: v.areaTime / totalAreaTime,
+                energyKwh: (v.areaTime / totalAreaTime) * totalEnergyKwh,
+                energyCost: (v.areaTime / totalAreaTime) * totalEnergyCost,
+                energyKwhPerKg: ((v.areaTime / totalAreaTime) * totalEnergyKwh) / v.weight,
+                energyCostPerKg: ((v.areaTime / totalAreaTime) * totalEnergyCost) / v.weight
+            }));
+
+            return allocatedCosts;
+        }
 
         function initCharts() {
+            console.log('📈 initCharts() called');
+            console.log('Chart.js loaded?', typeof Chart !== 'undefined');
+
+            if (typeof Chart === 'undefined') {
+                console.error('❌ Chart.js is not loaded!');
+                alert('Error: Chart.js library failed to load. Please check your internet connection.');
+                return;
+            }
+
             // Production Trend Chart
             const trendCtx = document.getElementById('productionTrendChart').getContext('2d');
             charts.productionTrend = new Chart(trendCtx, {
@@ -666,24 +1176,32 @@
                     plugins: {
                         legend: {
                             position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const weight = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((weight / total) * 100).toFixed(1);
+                                    return context.label + ': ' + weight + ' kg (' + percentage + '%)';
+                                }
+                            }
                         }
                     }
                 }
             });
 
-            // Cost Breakdown Chart
+            // Cost Breakdown Chart - แสดงต้นทุนพลังงานแต่ละชนิดผัก
             const costCtx = document.getElementById('costPieChart').getContext('2d');
+            const vegetableCosts = calculateEnergyCostPerVegetable();
+
             charts.costPie = new Chart(costCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['ค่าไฟฟ้า', 'ค่าแรง', 'ค่าวัสดุ'],
+                    labels: vegetableCosts.map(v => v.name),
                     datasets: [{
-                        data: [
-                            mockData.production.energyCost,
-                            mockData.production.laborCost,
-                            mockData.production.materialCost
-                        ],
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                        data: vegetableCosts.map(v => v.energyCost),
+                        backgroundColor: vegetableCosts.map(v => v.color)
                     }]
                 },
                 options: {
@@ -696,7 +1214,14 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return context.label + ': ' + context.parsed.toLocaleString() + ' บาท';
+                                    const veg = vegetableCosts[context.dataIndex];
+                                    return [
+                                        veg.name + ': ' + veg.energyKwh.toFixed(2) + ' kWh',
+                                        'ต้นทุน: ' + veg.energyCost.toFixed(2) + ' บาท',
+                                        'ต้นทุนต่อ kg: ' + veg.energyCostPerKg.toFixed(2) + ' บาท/kg',
+                                        'ผลผลิต: ' + veg.weight + ' kg',
+                                        'สัดส่วน: ' + (veg.ratio * 100).toFixed(1) + '%'
+                                    ];
                                 }
                             }
                         }
@@ -705,12 +1230,38 @@
             });
         }
 
+        function renderVegetableCostTable() {
+            console.log('🌱 renderVegetableCostTable() called');
+            const vegetableCosts = calculateEnergyCostPerVegetable();
+            console.log('Vegetable costs:', vegetableCosts);
+
+            const tbody = document.getElementById('vegetableCostTableBody');
+            console.log('Table body element:', tbody);
+
+            let html = '';
+            vegetableCosts.forEach((veg) => {
+                html += `
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 12px; font-weight: 600;">
+                            <span style="display: inline-block; width: 12px; height: 12px; background: ${veg.color}; border-radius: 50%; margin-right: 8px;"></span>
+                            ${veg.name}
+                        </td>
+                        <td style="text-align: right; padding: 12px;">${veg.weight} kg</td>
+                        <td style="text-align: right; padding: 12px;">${veg.energyKwh.toFixed(2)}</td>
+                        <td style="text-align: right; padding: 12px;">${veg.energyKwhPerKg.toFixed(2)}</td>
+                        <td style="text-align: right; padding: 12px; font-weight: 600; color: #667eea;">${veg.energyCostPerKg.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
         function updateMetrics() {
             const totalWeight = mockData.production.totalWeight;
             const crops = mockData.production.crops;
-            const totalCost = mockData.production.energyCost +
-                             mockData.production.laborCost +
-                             mockData.production.materialCost;
+            const electricityRate = 5.5; // ฿/kWh
+            const totalEnergyKwh = mockData.production.energyCost / electricityRate;
 
             document.getElementById('totalWeight').textContent = totalWeight.toLocaleString() + ' kg';
             document.getElementById('totalBatches').textContent = crops + ' รอบ';
@@ -719,11 +1270,8 @@
             document.getElementById('totalEnergy').textContent = mockData.production.energyCost.toLocaleString() + ' บาท';
             document.getElementById('energyPerKg').textContent = (mockData.production.energyCost / totalWeight).toFixed(2) + ' บาท';
 
-            const costPerKg = totalCost / totalWeight;
-            document.getElementById('costPerKg').textContent = costPerKg.toFixed(2) + ' บาท';
-            document.getElementById('elecCost').textContent = (mockData.production.energyCost / totalWeight).toFixed(2) + ' บาท';
-            document.getElementById('laborCost').textContent = (mockData.production.laborCost / totalWeight).toFixed(2) + ' บาท';
-            document.getElementById('materialCost').textContent = (mockData.production.materialCost / totalWeight).toFixed(2) + ' บาท';
+            document.getElementById('totalKwh').textContent = totalEnergyKwh.toLocaleString() + ' kWh';
+            document.getElementById('kwhPerKg').textContent = (totalEnergyKwh / totalWeight).toFixed(2) + ' kWh/kg';
         }
 
         function updateDashboard() {
@@ -738,11 +1286,50 @@
             updateMetrics();
         }
 
-        let selectedGreenhouse = null;
+        // Render greenhouse summary cards
+        function renderGreenhouseSummaryCards() {
+            console.log('🏭 renderGreenhouseSummaryCards() called');
 
+            mockData.greenhouses.forEach(gh => {
+                const container = document.getElementById(`${gh.id}-summary`);
+                if (!container) return;
+
+                const avgPerCrop = (gh.production / gh.crops).toFixed(1);
+                const energyPerKg = (gh.energyCost / gh.production).toFixed(2);
+
+                container.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div style="font-size: 1.1rem; font-weight: bold; color: #333;">
+                            ${gh.name}
+                        </div>
+                        <div style="color: #667eea; font-size: 0.85rem; background: #f0f3ff; padding: 4px 12px; border-radius: 12px; font-weight: 600;">
+                            คลิกดูรายละเอียด
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                        <span style="color: #666; font-size: 0.9rem;">ผลผลิตรวม</span>
+                        <span style="font-weight: 600; color: #333;">${gh.production} kg</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                        <span style="color: #666; font-size: 0.9rem;">จำนวนรอบปลูก</span>
+                        <span style="font-weight: 600; color: #333;">${gh.crops} รอบ</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                        <span style="color: #666; font-size: 0.9rem;">ผลผลิตเฉลี่ย/รอบ</span>
+                        <span style="font-weight: 600; color: #667eea;">${avgPerCrop} kg</span>
+                    </div>
+                `;
+
+                // Add click handler
+                container.onclick = () => viewGreenhouseDetail(gh.id);
+            });
+        }
+
+        // OLD function - keep for now
         function renderGreenhouseCards() {
-            const container = document.getElementById('greenhouseViewAll');
-            const selectorContainer = document.getElementById('greenhouseSelectorCards');
+            console.log('🏭 renderGreenhouseCards() called (OLD - deprecated)');
+            // Removing old implementation
+            return;
 
             let allCardsHTML = '';
             let selectorCardsHTML = '';
@@ -951,11 +1538,372 @@
             });
         }
 
+        // NEW FUNCTIONS for revised UI
+
+        // View detailed dashboard for specific greenhouse
+        function viewGreenhouseDetail(ghId) {
+            console.log(`📊 Viewing detail for ${ghId}`);
+            selectedGreenhouse = mockData.greenhouses.find(gh => gh.id === ghId);
+            if (!selectedGreenhouse) return;
+
+            // Hide summary cards, show detail view
+            document.querySelectorAll('.greenhouse-summary-card').forEach(card => card.parentElement.style.display = 'none');
+            document.getElementById('greenhouseDetailView').querySelector('button').style.display = 'flex';
+            document.getElementById('greenhouseDetailContent').style.display = 'block';
+
+            // Update title
+            document.getElementById('selectedGreenhouseName').textContent = selectedGreenhouse.name;
+
+            // Update metrics
+            const avgPerCrop = (selectedGreenhouse.production / selectedGreenhouse.crops).toFixed(1);
+            const electricityRate = 5.5;
+            const energyKwh = selectedGreenhouse.energyUsage;
+            const kwhPerKg = (energyKwh / selectedGreenhouse.production).toFixed(2);
+
+            document.getElementById('ghDetailProduction').innerHTML = `
+                <div class="metric">
+                    <span class="metric-label">ผลผลิตรวม</span>
+                    <span class="metric-value highlight">${selectedGreenhouse.production} kg</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">จำนวนรอบปลูก</span>
+                    <span class="metric-value">${selectedGreenhouse.crops} รอบ</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">เฉลี่ย/รอบ</span>
+                    <span class="metric-value">${avgPerCrop} kg</span>
+                </div>
+            `;
+
+            document.getElementById('ghDetailEnergy').innerHTML = `
+                <div class="metric">
+                    <span class="metric-label">ใช้ไฟรวม (IoT)</span>
+                    <span class="metric-value highlight">${energyKwh.toLocaleString()} kWh</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">ค่าไฟรวม</span>
+                    <span class="metric-value">${selectedGreenhouse.energyCost.toLocaleString()} บาท</span>
+                </div>
+            `;
+
+            document.getElementById('ghDetailEfficiency').innerHTML = `
+                <div class="metric">
+                    <span class="metric-label">ประสิทธิภาพ</span>
+                    <span class="metric-value highlight">${kwhPerKg} kWh/kg</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">ค่าไฟ/kg</span>
+                    <span class="metric-value">${(selectedGreenhouse.energyCost / selectedGreenhouse.production).toFixed(2)} ฿/kg</span>
+                </div>
+            `;
+
+            // Render crop chart
+            renderGreenhouseCropChart();
+
+            // Render harvest records table
+            renderHarvestRecordsTable();
+        }
+
+        // Back to overview
+        function backToOverview() {
+            document.querySelectorAll('.greenhouse-summary-card').forEach(card => card.parentElement.style.display = 'block');
+            document.getElementById('greenhouseDetailView').querySelector('button').style.display = 'none';
+            document.getElementById('greenhouseDetailContent').style.display = 'none';
+            selectedGreenhouse = null;
+        }
+
+        // Render crop chart for selected greenhouse
+        function renderGreenhouseCropChart() {
+            if (!selectedGreenhouse) return;
+
+            const canvas = document.getElementById('greenhouseCropChart');
+            const ctx = canvas.getContext('2d');
+
+            // Destroy existing chart if any
+            if (charts.greenhouseCrop) {
+                charts.greenhouseCrop.destroy();
+            }
+
+            const colors = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#F44336'];
+
+            charts.greenhouseCrop = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: selectedGreenhouse.currentCrops.map(c => c.name),
+                    datasets: [{
+                        data: selectedGreenhouse.currentCrops.map(c => c.weight),
+                        backgroundColor: colors.slice(0, selectedGreenhouse.currentCrops.length)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render harvest records table
+        function renderHarvestRecordsTable() {
+            if (!selectedGreenhouse) return;
+
+            const tbody = document.getElementById('harvestRecordsTable');
+            const electricityRate = 5.5;
+            const energyPerSqmPerDay = 2.8; // mock rate
+
+            let html = '';
+            selectedGreenhouse.currentCrops.forEach(crop => {
+                const spec = traySpecs[crop.trayType];
+                const totalArea = spec.area * crop.trayCount;
+                const actualArea = crop.fullHoles ? totalArea : (crop.holesUsed / (spec.holes * crop.trayCount)) * totalArea;
+
+                const energyKwh = (actualArea * crop.growthDays * energyPerSqmPerDay).toFixed(2);
+                const kwhPerKg = (energyKwh / crop.weight).toFixed(2);
+
+                html += `
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 12px;">${crop.harvestDate}</td>
+                        <td style="padding: 12px;">${crop.name}</td>
+                        <td style="text-align: right; padding: 12px;">${crop.weight}</td>
+                        <td style="text-align: right; padding: 12px;">${crop.trayCount}</td>
+                        <td style="text-align: right; padding: 12px;">${actualArea.toFixed(2)}</td>
+                        <td style="text-align: right; padding: 12px;">${crop.growthDays}</td>
+                        <td style="text-align: right; padding: 12px;">${energyKwh}</td>
+                        <td style="text-align: right; padding: 12px; font-weight: 600; color: #667eea;">${kwhPerKg}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // END NEW FUNCTIONS
+
+        // Toggle holes input visibility
+        function toggleHolesInput() {
+            const checkbox = document.getElementById('fullHoles');
+            const inputGroup = document.getElementById('holesInputGroup');
+            const holesInput = document.getElementById('holesUsed');
+
+            if (checkbox.checked) {
+                inputGroup.style.display = 'none';
+                holesInput.value = '';
+                holesInput.removeAttribute('required');
+            } else {
+                inputGroup.style.display = 'block';
+                holesInput.setAttribute('required', 'required');
+            }
+
+            updateTrayInfo();
+        }
+
+        // Update tray info when inputs change
+        function updateTrayInfo() {
+            const trayType = document.getElementById('trayType').value;
+            const trayCount = parseInt(document.getElementById('trayCount').value) || 0;
+            const fullHoles = document.getElementById('fullHoles').checked;
+            const holesUsed = parseInt(document.getElementById('holesUsed').value) || 0;
+
+            if (trayType && trayCount > 0) {
+                const spec = traySpecs[trayType];
+
+                // Calculate total area and holes
+                const totalArea = spec.area * trayCount;
+                const totalHoles = spec.holes * trayCount;
+
+                // Calculate actual area based on holes used
+                let actualArea = totalArea;
+                let actualHoles = totalHoles;
+
+                if (!fullHoles && holesUsed > 0) {
+                    actualHoles = holesUsed;
+                    if (holesUsed < totalHoles) {
+                        actualArea = (holesUsed / totalHoles) * totalArea;
+                    }
+                }
+
+                document.getElementById('totalArea').textContent = totalArea.toFixed(2) + ' ตร.ม.';
+                document.getElementById('totalHoles').textContent = totalHoles.toLocaleString() + ' หลุม';
+
+                if (!fullHoles && holesUsed > 0 && holesUsed < totalHoles) {
+                    document.getElementById('actualArea').textContent = actualArea.toFixed(2) + ' ตร.ม. (' + holesUsed.toLocaleString() + ' หลุม)';
+                    document.getElementById('actualArea').style.color = '#4CAF50';
+                } else {
+                    document.getElementById('actualArea').textContent = totalArea.toFixed(2) + ' ตร.ม. (เต็มหลุม)';
+                    document.getElementById('actualArea').style.color = '#667eea';
+                }
+            } else {
+                document.getElementById('totalArea').textContent = '-- ตร.ม.';
+                document.getElementById('totalHoles').textContent = '-- หลุม';
+                document.getElementById('actualArea').textContent = '-- ตร.ม.';
+            }
+
+            // Trigger energy calculation when tray info changes
+            calculateEnergy();
+        }
+
+        // Calculate energy preview in real-time
+        function calculateEnergy() {
+            const harvestDate = document.getElementById('harvestDate').value;
+            const plantDate = document.getElementById('plantDate').value;
+            const weight = parseFloat(document.getElementById('weight').value) || 0;
+            const totalAreaText = document.getElementById('totalArea').textContent;
+
+            // Extract area value from text
+            const areaMatch = totalAreaText.match(/[\d.]+/);
+            const totalArea = areaMatch ? parseFloat(areaMatch[0]) : 0;
+
+            if (harvestDate && plantDate && weight > 0 && totalArea > 0) {
+                const plant = new Date(plantDate);
+                const harvest = new Date(harvestDate);
+                const growthDays = Math.ceil((harvest - plant) / (1000 * 60 * 60 * 24));
+
+                if (growthDays > 0) {
+                    const mockEnergyPerSqmPerDay = 2.8; // kWh/ตร.ม./วัน
+                    const totalEnergyKwh = totalArea * growthDays * mockEnergyPerSqmPerDay;
+                    const kwhPerKg = totalEnergyKwh / weight;
+                    const kgPerKwh = weight / totalEnergyKwh;
+
+                    document.getElementById('previewGrowthDays').textContent = growthDays + ' วัน';
+                    document.getElementById('previewTotalEnergy').textContent = totalEnergyKwh.toFixed(2) + ' kWh';
+                    document.getElementById('previewKwhPerKg').textContent = kwhPerKg.toFixed(2) + ' kWh/kg';
+                    document.getElementById('previewKgPerKwh').textContent = kgPerKwh.toFixed(3) + ' kg/kWh';
+                    document.getElementById('energyPreview').style.display = 'block';
+                } else {
+                    document.getElementById('energyPreview').style.display = 'none';
+                }
+            } else {
+                document.getElementById('energyPreview').style.display = 'none';
+            }
+        }
+
+        // Modal functions
+        function openInputModal() {
+            document.getElementById('inputModal').style.display = 'block';
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('harvestDate').value = today;
+        }
+
+        function closeInputModal() {
+            document.getElementById('inputModal').style.display = 'none';
+            document.getElementById('productionForm').reset();
+            // Reset checkbox to checked
+            document.getElementById('fullHoles').checked = true;
+            document.getElementById('holesInputGroup').style.display = 'none';
+            // Reset calculated fields
+            document.getElementById('totalArea').textContent = '-- ตร.ม.';
+            document.getElementById('totalHoles').textContent = '-- หลุม';
+            document.getElementById('actualArea').textContent = '-- ตร.ม.';
+            document.getElementById('energyPreview').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('inputModal');
+            if (event.target === modal) {
+                closeInputModal();
+            }
+        }
+
+        function submitProduction(event) {
+            event.preventDefault();
+
+            const trayType = document.getElementById('trayType').value;
+            const trayCount = parseInt(document.getElementById('trayCount').value);
+            const spec = traySpecs[trayType];
+
+            const totalArea = (spec.area * trayCount).toFixed(2);
+            const totalHoles = spec.holes * trayCount;
+
+            const fullHoles = document.getElementById('fullHoles').checked;
+            const holesUsed = fullHoles ? totalHoles : (parseInt(document.getElementById('holesUsed').value) || totalHoles);
+
+            const formData = {
+                harvestDate: document.getElementById('harvestDate').value,
+                greenhouse: document.getElementById('greenhouse').value,
+                trayType: trayType,
+                trayTypeName: spec.name,
+                trayCount: trayCount,
+                totalArea: parseFloat(totalArea),
+                totalHoles: totalHoles,
+                fullHoles: fullHoles,
+                holesUsed: holesUsed,
+                vegetableType: document.getElementById('vegetableType').value,
+                weight: parseFloat(document.getElementById('weight').value),
+                plantDate: document.getElementById('plantDate').value
+            };
+
+            // Calculate growth days
+            const plantDate = new Date(formData.plantDate);
+            const harvestDate = new Date(formData.harvestDate);
+            const growthDays = Math.ceil((harvestDate - plantDate) / (1000 * 60 * 60 * 24));
+
+            // Calculate energy metrics (mock calculation based on area-time)
+            const electricityRate = 5.5; // ฿/kWh
+            const mockEnergyPerSqmPerDay = 2.8; // kWh/ตร.ม./วัน (สมมติ)
+            const totalEnergyKwh = formData.totalArea * growthDays * mockEnergyPerSqmPerDay;
+            const kwhPerKg = totalEnergyKwh / formData.weight;
+            const kgPerKwh = formData.weight / totalEnergyKwh;
+
+            console.log('บันทึกข้อมูลผลผลิต:', {
+                ...formData,
+                growthDays: growthDays,
+                totalEnergyKwh: totalEnergyKwh,
+                kwhPerKg: kwhPerKg,
+                kgPerKwh: kgPerKwh
+            });
+
+            // In real app, send to API
+            const holesStatus = formData.fullHoles ? 'เต็มหลุม' : `${formData.holesUsed.toLocaleString()} หลุม`;
+            alert(`✅ บันทึกสำเร็จ!\n\nชนิดผัก: ${getVegetableName(formData.vegetableType)}\nน้ำหนัก: ${formData.weight} kg\nจำนวนถาด: ${formData.trayCount} ถาด (${formData.trayTypeName})\nพื้นที่: ${formData.totalArea} ตร.ม.\nการใช้หลุม: ${holesStatus}\nจำนวนวันปลูก: ${growthDays} วัน\n\n--- พลังงาน ---\nใช้ไฟรวม: ${totalEnergyKwh.toFixed(2)} kWh\nประสิทธิภาพ: ${kwhPerKg.toFixed(2)} kWh/kg\nหรือ: ${kgPerKwh.toFixed(2)} kg/kWh`);
+
+            closeInputModal();
+
+            // Refresh dashboard (in real app, fetch new data from API)
+            // updateDashboard();
+        }
+
+        function getVegetableName(value) {
+            const names = {
+                'lettuce': 'ผักกาดหอม',
+                'kale': 'คะน้า',
+                'spinach': 'ผักโขม',
+                'basil': 'โหระพา'
+            };
+            return names[value] || value;
+        }
+
         // Initialize on page load
         window.addEventListener('load', () => {
-            initCharts();
-            updateMetrics();
-            renderGreenhouseCards();
+            console.log('🚀 Page loaded - initializing dashboard...');
+            console.log('📊 Mock data:', mockData);
+
+            try {
+                console.log('📈 Initializing charts...');
+                initCharts();
+                console.log('✅ Charts initialized');
+
+                console.log('📊 Updating metrics...');
+                updateMetrics();
+                console.log('✅ Metrics updated');
+
+                console.log('🏭 Rendering greenhouse summary cards...');
+                renderGreenhouseSummaryCards();
+                console.log('✅ Greenhouse summary cards rendered');
+
+                console.log('🌱 Rendering vegetable cost table...');
+                renderVegetableCostTable();
+                console.log('✅ Vegetable cost table rendered');
+
+                console.log('✅ Dashboard initialization complete!');
+            } catch (error) {
+                console.error('❌ Error during initialization:', error);
+            }
         });
     </script>
 </body>

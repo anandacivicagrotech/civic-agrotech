@@ -73,6 +73,56 @@
             border-color: #43cea2;
         }
 
+        .settings-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 1000;
+            min-width: 180px;
+            margin-top: 5px;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-menu button {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .dropdown-menu button:hover {
+            background: #f8f9fa;
+            color: #43cea2;
+        }
+
+        .dropdown-menu button:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dropdown-menu button:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
         .tab-content {
             display: none;
         }
@@ -500,9 +550,16 @@
         </header>
 
         <div class="tab-nav">
-            <button class="tab-button active" onclick="showTab('projects')">📋 โครงการทดลอง</button>
-            <button class="tab-button" onclick="showTab('collect')">⚡ บันทึกด่วน</button>
-            <button class="tab-button" onclick="showTab('templates')">📝 Templates</button>
+            <button class="tab-button active" onclick="showTab('projects')">📋 โครงการ</button>
+            <button class="tab-button" onclick="showTab('collect')">📝 บันทึกผล</button>
+            <div class="settings-dropdown">
+                <button class="tab-button" onclick="toggleSettings()">⚙️ ตั้งค่า</button>
+                <div class="dropdown-menu" id="settingsMenu">
+                    <button onclick="showTemplates()">📝 Templates</button>
+                    <button onclick="showSystemSettings()">🔧 ระบบ</button>
+                    <button onclick="showExportSettings()">📤 Export</button>
+                </div>
+            </div>
         </div>
 
         <!-- Tab 1: Projects -->
@@ -510,7 +567,7 @@
             <!-- Projects List View -->
             <div id="projectsListView" class="view-container active">
                 <div class="card">
-                    <h2>📋 โครงการทดลอง (Structured Research)</h2>
+                    <h2>📋 โครงการ (Projects)</h2>
                     <p style="color: #666; margin-bottom: 20px;">
                         <strong>เมื่อไหร่ใช้:</strong> เมื่อวางแผนการทดลองที่ต้องการเก็บข้อมูลอย่างเป็นระบบ<br>
                         <strong>ข้อดี:</strong> ข้อมูลมีโครงสร้าง เหมาะสำหรับการวิเคราะห์และเปรียบเทียบ
@@ -633,7 +690,7 @@
         <!-- Tab 2: Quick Collect -->
         <div id="collect" class="tab-content">
             <div class="card">
-                <h2>⚡ บันทึกข้อมูลด่วน (Quick Collect)</h2>
+                <h2>📝 บันทึกผล (Data Collection)</h2>
                 <p style="color: #666; margin-bottom: 20px;">
                     <strong>เมื่อไหร่ใช้:</strong> เมื่อพบเหตุการณ์ไม่คาดคิด เช่น ใบเหลือง ใบไหม้ แมลง หรือสังเกตเห็นอะไรผิดปกติ<br>
                     <strong>ข้อดี:</strong> บันทึกเร็ว ไม่ต้องกรอกข้อมูลเยอะ แค่ถ่ายรูปและเขียนหมายเหตุ
@@ -1271,6 +1328,37 @@
             alert('บันทึกข้อมูลสำเร็จ!\n\nข้อมูลจะถูกเพิ่มเข้าไปใน Crop ที่เลือก');
             this.reset();
             document.getElementById('quickImagePreview').innerHTML = '';
+        });
+
+        // Settings dropdown functions
+        function toggleSettings() {
+            const menu = document.getElementById('settingsMenu');
+            menu.classList.toggle('show');
+        }
+
+        function showTemplates() {
+            alert('Templates Management\n\nฟีเจอร์นี้จะเปิดให้ใช้งานเร็ว ๆ นี้\n- จัดการ Templates\n- สร้าง Template ใหม่\n- แก้ไข Template ที่มีอยู่');
+            document.getElementById('settingsMenu').classList.remove('show');
+        }
+
+        function showSystemSettings() {
+            alert('System Settings\n\nฟีเจอร์นี้จะเปิดให้ใช้งานเร็ว ๆ นี้\n- ตั้งค่าระบบ\n- การเชื่อมต่อ IoT\n- การสำรองข้อมูล');
+            document.getElementById('settingsMenu').classList.remove('show');
+        }
+
+        function showExportSettings() {
+            alert('Export Settings\n\nฟีเจอร์นี้จะเปิดให้ใช้งานเร็ว ๆ นี้\n- ตั้งค่าการ Export\n- รูปแบบไฟล์\n- การส่งออกอัตโนมัติ');
+            document.getElementById('settingsMenu').classList.remove('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.settings-dropdown');
+            const menu = document.getElementById('settingsMenu');
+            
+            if (!dropdown.contains(event.target)) {
+                menu.classList.remove('show');
+            }
         });
     </script>
 </body>
