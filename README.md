@@ -36,7 +36,7 @@
 - Ideas v3: 2 หัวข้อใหม่ (รอนำเสนอ)
 
 ### ⏳ งานที่รอดำเนินการ
-- นำเสนอ Ideas v3 (Line OA Smart Assistant + FarmLab Data)
+- นำเสนอ Ideas v3 (Farm Alert Logger & AI Assistant + FarmLab)
 - รอผลการประเมินว่าจะได้ไปต่อหรือไม่
 
 ### � บทFเรียนที่ได้

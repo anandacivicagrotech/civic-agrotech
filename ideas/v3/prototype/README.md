@@ -1,4 +1,4 @@
-# FarmLab Data - Prototype README
+# FarmLab - Prototype README
 
 ## โครงสร้างข้อมูลที่กำลังออกแบบ
 
