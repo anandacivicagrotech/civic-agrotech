@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmLab - แพลตฟอร์มข้อมูลการทดลองฟาร์ม</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1>🌱 FarmLab</h1>
+                <span class="subtitle">แพลตฟอร์มข้อมูลแลปฟาร์ม</span>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span>👤 ดร.สมชาย</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="tab-nav">
+            <div class="tab-nav-left">
+                <button id="globalBackBtn" class="back-button" onclick="goBack()" style="display: none;">← กลับ</button>
+                <button class="tab-button active" onclick="showTab('dashboard')">📊 ภาพรวม (Dashboard)</button>
+                <button class="tab-button" onclick="showTab('projects')">📁 โครงการ (Projects)</button>
+                <button class="tab-button" onclick="showTab('data')">📝 บันทึกข้อมูลพืช (Plant Data)</button>
+                <button class="tab-button" onclick="showTab('greenhouses')">🏠 โรงเรือน (Greenhouses)</button>
+            </div>
+        </div>
+
+        <!-- Tab 1: Dashboard -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h2>📊 ภาพรวม (Dashboard)</h2>
+                <p style="color: #888; padding: 20px;">กำลังพัฒนาใน Phase 5...</p>
+            </div>
+        </div>
+
+        <!-- Tab 2: Projects -->
+        <div id="projects" class="tab-content">
+            <div id="projectsListView" class="view-container active">
+                <div class="card">
+                    <h2>📁 จัดการโครงการ (Project Management)</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 20px;">
+                        <h3 style="margin: 0;">โครงการทั้งหมด</h3>
+                        <button class="btn" onclick="showCreateProject()">+ สร้างโครงการใหม่</button>
+                    </div>
+                    <div class="projects-grid" id="projectsGrid"></div>
+                </div>
+            </div>
+
+            <div id="createProjectView" class="view-container"></div>
+            <div id="projectDetailView" class="view-container">
+                <div class="card">
+                    <div id="projectDetailContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Data Entry -->
+        <div id="data" class="tab-content"></div>
+
+        <!-- Tab 4: Greenhouses -->
+        <div id="greenhouses" class="tab-content"></div>
+    </div>
+
+    <!-- Load Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/projects.js"></script>
+    <script src="js/data-entry.js"></script>
+    <script src="js/greenhouses.js"></script>
+</body>
+</html>
