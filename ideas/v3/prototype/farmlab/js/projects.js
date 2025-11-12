@@ -1380,7 +1380,85 @@ function createPlant(event, projectId, cropId) {
 }
 
 function viewPlant(projectId, cropId, plantId) {
-    alert('ฟีเจอร์ดูรายละเอียดพืชจะพัฒนาใน Phase 4 (Data Entry)');
+    const project = projects.find(p => p.id === projectId);
+    const crop = project.crops.find(c => c.id === cropId);
+    const plant = crop.plants.find(p => p.id === plantId);
+    
+    // Remember where we came from
+    previousPage = { type: 'cropDetail', projectId, cropId };
+    updateBackButton();
+    
+    // Make sure we're in the detail view
+    document.getElementById('projectsListView').classList.remove('active');
+    document.getElementById('createProjectView').classList.remove('active');
+    document.getElementById('projectDetailView').classList.add('active');
+    
+    const content = document.getElementById('projectDetailContent');
+    
+    content.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 30px;">
+            <div style="flex: 1;">
+                <h2>${plant.displayName}</h2>
+                <p style="color: #666; margin-top: 10px;">
+                    <strong>โครงการ:</strong> ${project.name}<br>
+                    <strong>Crop:</strong> ${crop.name} (ปลูกเมื่อ ${new Date(crop.plantDate).toLocaleDateString('th-TH')})<br>
+                    <strong>ตำแหน่ง:</strong> ${project.greenhouse.name} → Zone ${crop.zone} → ${plant.location}<br>
+                    <strong>จำนวน:</strong> ${plant.quantity} ต้น
+                </p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-secondary" onclick="editPlant(${projectId}, ${cropId}, ${plantId})">✏️ แก้ไข</button>
+                <button class="btn btn-secondary" onclick="deletePlant(${projectId}, ${cropId}, ${plantId})" style="background: #ff4444; border-color: #ff4444;">🗑️ ลบ</button>
+                <button class="btn" onclick="alert('Phase 4: เพิ่มการบันทึกข้อมูล')">+ บันทึกข้อมูล</button>
+            </div>
+        </div>
+        
+        <h3 style="margin-bottom: 15px;">📊 ข้อมูลที่บันทึก (${plant.recordCount} ครั้ง)</h3>
+        ${plant.recordCount === 0 ? `
+            <div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 12px; border: 2px dashed #ddd;">
+                <div style="font-size: 60px; margin-bottom: 20px;">📊</div>
+                <h3 style="color: #666; margin-bottom: 10px;">ยังไม่มีข้อมูล</h3>
+                <p style="color: #888; margin-bottom: 20px;">เริ่มต้นโดยการบันทึกข้อมูลแรกของคุณ</p>
+                <button class="btn" onclick="alert('Phase 4: เพิ่มการบันทึกข้อมูล')">+ บันทึกข้อมูล</button>
+            </div>
+        ` : `
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                            <th style="padding: 12px; text-align: left;">วันที่</th>
+                            <th style="padding: 12px; text-align: left;">เวลา</th>
+                            <th style="padding: 12px; text-align: center;">ความสูง (cm)</th>
+                            <th style="padding: 12px; text-align: center;">จำนวนใบ (ใบ)</th>
+                            <th style="padding: 12px; text-align: center;">น้ำหนัก (g)</th>
+                            <th style="padding: 12px; text-align: center;">Temp (°C)</th>
+                            <th style="padding: 12px; text-align: center;">Humidity (%)</th>
+                            <th style="padding: 12px; text-align: center;">รูปภาพ</th>
+                            <th style="padding: 12px; text-align: left;">บันทึกโดย</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${plant.records.map(record => `
+                            <tr style="border-bottom: 1px solid #dee2e6;">
+                                <td style="padding: 12px;">${new Date(record.date).toLocaleDateString('th-TH')}</td>
+                                <td style="padding: 12px;">${record.time}</td>
+                                <td style="padding: 12px; text-align: center; font-weight: 600;">${record.plantData['ความสูง']}</td>
+                                <td style="padding: 12px; text-align: center; font-weight: 600;">${record.plantData['จำนวนใบ']}</td>
+                                <td style="padding: 12px; text-align: center; font-weight: 600;">${record.plantData['น้ำหนัก']}</td>
+                                <td style="padding: 12px; text-align: center;">${record.environmentData.temperature}</td>
+                                <td style="padding: 12px; text-align: center;">${record.environmentData.humidity}</td>
+                                <td style="padding: 12px; text-align: center;">
+                                    ${record.images.length} รูป
+                                    ${record.images.map(img => img.source === 'camera' ? '🤖' : '📷').join(' ')}
+                                </td>
+                                <td style="padding: 12px;">${record.recordedBy}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `}
+    `;
 }
 
 // ============================================
