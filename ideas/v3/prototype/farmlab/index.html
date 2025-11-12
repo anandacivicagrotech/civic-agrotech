@@ -68,11 +68,31 @@
     </div>
 
     <!-- Load Scripts -->
+    <!-- Utils (load first) -->
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/utils/date.js"></script>
+    <script src="js/utils/storage.js"></script>
+    <script src="js/utils/index.js"></script>
+
+    <!-- Data Store -->
     <script src="js/data.js"></script>
+
+    <!-- Core App -->
     <script src="js/app.js"></script>
     <script src="js/dashboard.js"></script>
-    <script src="js/projects.js"></script>
-    <script src="js/data-entry.js"></script>
-    <script src="js/greenhouses.js"></script>
+
+    <!-- Projects Module -->
+    <script src="js/projects/state.js"></script>
+    <script src="js/projects/navigation.js"></script>
+    <script src="js/projects/index.js"></script>
+    <script src="js/projects.js"></script><!-- Old file (will refactor) -->
+
+    <!-- Data Entry Module -->
+    <script src="js/data-entry/index.js"></script>
+    <script src="js/data-entry.js"></script><!-- Old file (will refactor) -->
+
+    <!-- Greenhouses Module -->
+    <script src="js/greenhouses/index.js"></script>
+    <script src="js/greenhouses.js"></script><!-- Old file (will refactor) -->
 </body>
 </html>

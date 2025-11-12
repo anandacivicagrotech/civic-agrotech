@@ -1,53 +1,47 @@
 // Projects management functionality
+// NOTE: Global variables moved to projects/state.js
+// NOTE: Navigation functions (goBack, updateBackButton, etc.) moved to projects/navigation.js
 
-// Global variables for navigation
-let currentProjectId = null;
-let currentRoundId = null;
-let currentCropId = null;
-let selectedProjectLayers = [];
+// === Backward Compatibility: Use ProjectsState ===
+// Alias old variables to ProjectsState for backward compatibility
+// (ไม่ต้อง declare let เพราะจะ define เป็น property แทน)
 
-// Simple back navigation - just remember where we came from
-let previousPage = null;
+Object.defineProperty(window, 'currentProjectId', {
+    get() { return ProjectsState.currentProjectId; },
+    set(val) { ProjectsState.currentProjectId = val; }
+});
+Object.defineProperty(window, 'currentRoundId', {
+    get() { return ProjectsState.currentRoundId; },
+    set(val) { ProjectsState.currentRoundId = val; }
+});
+Object.defineProperty(window, 'currentCropId', {
+    get() { return ProjectsState.currentCropId; },
+    set(val) { ProjectsState.currentCropId = val; }
+});
+Object.defineProperty(window, 'selectedProjectLayers', {
+    get() { return ProjectsState.selectedProjectLayers; },
+    set(val) { ProjectsState.selectedProjectLayers = val; }
+});
+Object.defineProperty(window, 'previousPage', {
+    get() { return ProjectsState.previousPage; },
+    set(val) { ProjectsState.previousPage = val; }
+});
 
-// Show/hide global back button
-function updateBackButton() {
-    const backBtn = document.getElementById('globalBackBtn');
-    if (backBtn) {
-        if (previousPage) {
-            backBtn.style.display = 'inline-block';
-        } else {
-            backBtn.style.display = 'none';
-        }
-    }
-}
+// fieldIdCounter for form fields
+Object.defineProperty(window, 'fieldIdCounter', {
+    get() { return ProjectsState.fieldIdCounter; },
+    set(val) { ProjectsState.fieldIdCounter = val; }
+});
 
-// Go back to previous page
-function goBack() {
-    if (previousPage) {
-        const prev = previousPage;
-        previousPage = null; // Clear to avoid loops
-        
-        if (prev.type === 'projectsList') {
-            showProjectsList();
-        } else if (prev.type === 'projectDetail') {
-            viewProject(prev.projectId);
-        } else if (prev.type === 'cropDetail') {
-            viewCrop(prev.projectId, prev.cropId);
-        }
-    } else {
-        showProjectsList();
-    }
-    updateBackButton();
-}
-
-// Simple helper - not used anymore but kept for compatibility
-function viewProjectWithoutHistory(projectId) {
-    viewProject(projectId);
-}
+// === COMMENTED OUT - Now in projects/navigation.js ===
+// function updateBackButton() { ... }
+// function goBack() { ... }
+// function viewProjectWithoutHistory() { ... }
+// function backToProject() { ... }
 
 // Old function kept for compatibility
 function viewProjectWithoutHistoryOld(projectId) {
-    currentProjectId = projectId;
+    ProjectsState.currentProjectId = projectId;
     const project = projects.find(p => p.id === projectId);
     
     // Don't add to history
@@ -319,12 +313,8 @@ function renderCreateProjectForm() {
 }
 
 
-// Navigation helpers
-function backToProject() {
-    if (currentProjectId) {
-        viewProject(currentProjectId);
-    }
-}
+// Navigation helpers (moved to projects/navigation.js)
+// function backToProject() - now in navigation.js
 
 function createProject(event) {
     event.preventDefault();
@@ -954,7 +944,8 @@ function showCreatePlant(projectId, cropId) {
     }, 0);
 }
 
-let fieldIdCounter = 1;
+// fieldIdCounter moved to projects/state.js
+// let fieldIdCounter = 1; // ❌ ซ้ำ - ใช้จาก ProjectsState แทน
 
 // Sensor mapping for smart detection
 const SENSOR_MAPPING = {
@@ -1413,8 +1404,17 @@ function viewPlant(projectId, cropId, plantId) {
             </div>
         </div>
         
-        <h3 style="margin-bottom: 15px;">📊 ข้อมูลที่บันทึก (${plant.recordCount} ครั้ง)</h3>
-        ${plant.recordCount === 0 ? `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0;">📊 ข้อมูลที่บันทึก (${plant.records?.length || 0} ครั้ง)</h3>
+            ${plant.records?.length > 0 ? `
+                <div style="display: flex; gap: 10px;">
+                    <button id="tableViewBtn" class="btn btn-secondary" onclick="showPlantDataView(${projectId}, ${cropId}, ${plantId}, 'table')" style="background: #43cea2; color: white;">📊 ตาราง</button>
+                    <button id="galleryViewBtn" class="btn btn-secondary" onclick="showPlantDataView(${projectId}, ${cropId}, ${plantId}, 'gallery')">📷 รูปภาพ</button>
+                </div>
+            ` : ''}
+        </div>
+        
+        ${(!plant.records || plant.records.length === 0) ? `
             <div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 12px; border: 2px dashed #ddd;">
                 <div style="font-size: 60px; margin-bottom: 20px;">📊</div>
                 <h3 style="color: #666; margin-bottom: 10px;">ยังไม่มีข้อมูล</h3>
@@ -1422,15 +1422,17 @@ function viewPlant(projectId, cropId, plantId) {
                 <button class="btn" onclick="alert('Phase 4: เพิ่มการบันทึกข้อมูล')">+ บันทึกข้อมูล</button>
             </div>
         ` : `
+            <div id="plantDataTableView">
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden;">
                     <thead>
                         <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
                             <th style="padding: 12px; text-align: left;">วันที่</th>
                             <th style="padding: 12px; text-align: left;">เวลา</th>
-                            <th style="padding: 12px; text-align: center;">ความสูง (cm)</th>
-                            <th style="padding: 12px; text-align: center;">จำนวนใบ (ใบ)</th>
-                            <th style="padding: 12px; text-align: center;">น้ำหนัก (g)</th>
+                            <th style="padding: 12px; text-align: left;">ระยะ</th>
+                            ${plant.dataFields.slice(0, 3).map(field => 
+                                `<th style="padding: 12px; text-align: center;">${field.name}${field.unit ? ` (${field.unit})` : ''}</th>`
+                            ).join('')}
                             <th style="padding: 12px; text-align: center;">Temp (°C)</th>
                             <th style="padding: 12px; text-align: center;">Humidity (%)</th>
                             <th style="padding: 12px; text-align: center;">รูปภาพ</th>
@@ -1438,27 +1440,255 @@ function viewPlant(projectId, cropId, plantId) {
                         </tr>
                     </thead>
                     <tbody>
-                        ${plant.records.map(record => `
+                        ${plant.records.map(record => {
+                            const stageLabels = {
+                                'germination': 'เพาะเมล็ด',
+                                'seedling': 'ต้นกล้า',
+                                'vegetative': 'เติบโต',
+                                'mature': 'โตเต็มที่',
+                                'harvest': 'เก็บเกี่ยว'
+                            };
+                            return `
                             <tr style="border-bottom: 1px solid #dee2e6;">
                                 <td style="padding: 12px;">${new Date(record.date).toLocaleDateString('th-TH')}</td>
                                 <td style="padding: 12px;">${record.time}</td>
-                                <td style="padding: 12px; text-align: center; font-weight: 600;">${record.plantData['ความสูง']}</td>
-                                <td style="padding: 12px; text-align: center; font-weight: 600;">${record.plantData['จำนวนใบ']}</td>
-                                <td style="padding: 12px; text-align: center; font-weight: 600;">${record.plantData['น้ำหนัก']}</td>
-                                <td style="padding: 12px; text-align: center;">${record.environmentData.temperature}</td>
-                                <td style="padding: 12px; text-align: center;">${record.environmentData.humidity}</td>
+                                <td style="padding: 12px;">
+                                    <span style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">
+                                        ${stageLabels[record.stage] || record.stage || '-'}
+                                    </span>
+                                </td>
+                                ${plant.dataFields.slice(0, 3).map(field => 
+                                    `<td style="padding: 12px; text-align: center; font-weight: 600;">${record.plantData[field.name] || '-'}</td>`
+                                ).join('')}
+                                <td style="padding: 12px; text-align: center;">${record.environmentData?.temperature || '-'}</td>
+                                <td style="padding: 12px; text-align: center;">${record.environmentData?.humidity || '-'}</td>
                                 <td style="padding: 12px; text-align: center;">
-                                    ${record.images.length} รูป
-                                    ${record.images.map(img => img.source === 'camera' ? '🤖' : '📷').join(' ')}
+                                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                        <span>${record.images?.length || 0} รูป</span>
+                                        ${record.images?.length > 0 ? `<button onclick="viewRecordImages(${record.id}, ${plantId})" style="padding: 4px 10px; background: #2196f3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">ดูรูป</button>` : ''}
+                                    </div>
                                 </td>
                                 <td style="padding: 12px;">${record.recordedBy}</td>
                             </tr>
-                        `).join('')}
+                        `}).join('')}
                     </tbody>
                 </table>
             </div>
+            </div>
+            
+            <div id="plantDataGalleryView" style="display: none;">
+                ${renderPlantGallery(plant)}
+            </div>
         `}
     `;
+}
+
+// Show plant data view (table or gallery)
+function showPlantDataView(projectId, cropId, plantId, view) {
+    const tableView = document.getElementById('plantDataTableView');
+    const galleryView = document.getElementById('plantDataGalleryView');
+    const tableBtn = document.getElementById('tableViewBtn');
+    const galleryBtn = document.getElementById('galleryViewBtn');
+    
+    if (view === 'table') {
+        tableView.style.display = 'block';
+        galleryView.style.display = 'none';
+        tableBtn.style.background = '#43cea2';
+        tableBtn.style.color = 'white';
+        galleryBtn.style.background = '#6c757d';
+        galleryBtn.style.color = 'white';
+    } else {
+        tableView.style.display = 'none';
+        galleryView.style.display = 'block';
+        tableBtn.style.background = '#6c757d';
+        tableBtn.style.color = 'white';
+        galleryBtn.style.background = '#43cea2';
+        galleryBtn.style.color = 'white';
+    }
+}
+
+// Render plant gallery
+function renderPlantGallery(plant) {
+    if (!plant.records || plant.records.length === 0) {
+        return '<p style="text-align: center; color: #999; padding: 40px;">ยังไม่มีรูปภาพ</p>';
+    }
+    
+    // Collect all images from all records
+    const allImages = [];
+    plant.records.forEach(record => {
+        if (record.images && record.images.length > 0) {
+            record.images.forEach(img => {
+                allImages.push({
+                    ...img,
+                    recordDate: record.date,
+                    recordTime: record.time,
+                    stage: record.stage,
+                    recordedBy: record.recordedBy,
+                    recordId: record.id
+                });
+            });
+        }
+    });
+    
+    if (allImages.length === 0) {
+        return '<p style="text-align: center; color: #999; padding: 40px;">ยังไม่มีรูปภาพ</p>';
+    }
+    
+    const stageLabels = {
+        'germination': 'เพาะเมล็ด',
+        'seedling': 'ต้นกล้า',
+        'vegetative': 'เติบโต',
+        'mature': 'โตเต็มที่',
+        'harvest': 'เก็บเกี่ยว'
+    };
+    
+    return `
+        <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <div>
+                    <strong>ทั้งหมด:</strong> ${allImages.length} รูป
+                </div>
+                <div>
+                    <strong>จากคน:</strong> ${allImages.filter(img => img.source === 'manual').length} รูป
+                </div>
+                <div>
+                    <strong>จากกล้อง:</strong> ${allImages.filter(img => img.source === 'camera').length} รูป
+                </div>
+            </div>
+        </div>
+        
+        <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+            ${allImages.map((img, index) => `
+                <div class="gallery-item" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); cursor: pointer; transition: all 0.3s;" onclick="openGalleryModal(${index}, ${JSON.stringify(allImages).replace(/"/g, '&quot;')})">
+                    <div style="position: relative; width: 100%; height: 200px; background: #f0f0f0;">
+                        <img src="${img.url}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;">
+                            ${img.source === 'camera' ? '🤖 กล้อง' : '📷 คน'}
+                        </div>
+                        ${img.stage ? `
+                            <div style="position: absolute; top: 10px; right: 10px; background: rgba(33, 150, 243, 0.9); color: white; padding: 5px 10px; border-radius: 6px; font-size: 0.85rem;">
+                                ${stageLabels[img.stage] || img.stage}
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div style="padding: 15px;">
+                        <div style="font-weight: 600; margin-bottom: 8px; color: #333;">
+                            ${new Date(img.recordDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' })}
+                        </div>
+                        <div style="font-size: 0.9rem; color: #666; display: flex; justify-content: space-between;">
+                            <span>⏰ ${img.recordTime}</span>
+                            <span>👤 ${img.recordedBy}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// Open gallery modal
+function openGalleryModal(startIndex, imagesJson) {
+    const images = JSON.parse(imagesJson.replace(/&quot;/g, '"'));
+    let currentIndex = startIndex;
+    
+    const stageLabels = {
+        'germination': 'เพาะเมล็ด',
+        'seedling': 'ต้นกล้า',
+        'vegetative': 'เติบโต',
+        'mature': 'โตเต็มที่',
+        'harvest': 'เก็บเกี่ยว'
+    };
+    
+    const modal = document.createElement('div');
+    modal.id = 'galleryModal';
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px;';
+    
+    function renderModal() {
+        const img = images[currentIndex];
+        modal.innerHTML = `
+            <div style="max-width: 1200px; width: 100%; max-height: 90vh; display: flex; flex-direction: column;">
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; color: white;">
+                    <div style="font-size: 1.2rem; font-weight: 600;">
+                        รูปที่ ${currentIndex + 1} / ${images.length}
+                    </div>
+                    <button onclick="document.getElementById('galleryModal').remove()" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 2rem; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
+                </div>
+                
+                <!-- Image -->
+                <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 20px;">
+                    ${currentIndex > 0 ? `
+                        <button onclick="window.galleryPrev()" style="position: absolute; left: 20px; background: rgba(255,255,255,0.2); border: none; color: white; font-size: 2rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">‹</button>
+                    ` : ''}
+                    
+                    <img src="${img.url}" style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px;">
+                    
+                    ${currentIndex < images.length - 1 ? `
+                        <button onclick="window.galleryNext()" style="position: absolute; right: 20px; background: rgba(255,255,255,0.2); border: none; color: white; font-size: 2rem; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">›</button>
+                    ` : ''}
+                </div>
+                
+                <!-- Info -->
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; color: white;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 5px;">แหล่งที่มา</div>
+                            <div style="font-size: 1.1rem; font-weight: 600;">${img.source === 'camera' ? '🤖 กล้อง' : '📷 คน'}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 5px;">วันที่</div>
+                            <div style="font-size: 1.1rem; font-weight: 600;">${new Date(img.recordDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 5px;">เวลา</div>
+                            <div style="font-size: 1.1rem; font-weight: 600;">${img.recordTime}</div>
+                        </div>
+                        ${img.stage ? `
+                            <div>
+                                <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 5px;">ระยะการเติบโต</div>
+                                <div style="font-size: 1.1rem; font-weight: 600;">${stageLabels[img.stage] || img.stage}</div>
+                            </div>
+                        ` : ''}
+                        <div>
+                            <div style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 5px;">บันทึกโดย</div>
+                            <div style="font-size: 1.1rem; font-weight: 600;">${img.recordedBy}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    window.galleryPrev = () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderModal();
+        }
+    };
+    
+    window.galleryNext = () => {
+        if (currentIndex < images.length - 1) {
+            currentIndex++;
+            renderModal();
+        }
+    };
+    
+    renderModal();
+    document.body.appendChild(modal);
+    
+    // Keyboard navigation
+    const handleKeyboard = (e) => {
+        if (e.key === 'ArrowLeft' && currentIndex > 0) {
+            window.galleryPrev();
+        } else if (e.key === 'ArrowRight' && currentIndex < images.length - 1) {
+            window.galleryNext();
+        } else if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', handleKeyboard);
+        }
+    };
+    
+    document.addEventListener('keydown', handleKeyboard);
 }
 
 // ============================================
@@ -1710,6 +1940,9 @@ function deleteCrop(projectId, cropId) {
 
 // Edit Plant
 function editPlant(projectId, cropId, plantId) {
+    currentProjectId = projectId;
+    currentCropId = cropId;
+    
     const project = projects.find(p => p.id === projectId);
     const crop = project.crops.find(c => c.id === cropId);
     const plant = crop.plants.find(p => p.id === plantId);
@@ -1724,6 +1957,10 @@ function editPlant(projectId, cropId, plantId) {
     document.getElementById('projectDetailView').classList.add('active');
     
     const content = document.getElementById('projectDetailContent');
+    
+    // Parse current plant location to get selected layers
+    const currentLayers = plant.location.replace('Layer ', '').replace('Layers ', '').split(', ');
+    
     content.innerHTML = `
         <h2>แก้ไขพืช</h2>
         <form id="editPlantForm" onsubmit="updatePlant(event, ${projectId}, ${cropId}, ${plantId})">
@@ -1741,15 +1978,36 @@ function editPlant(projectId, cropId, plantId) {
                     <input type="number" id="editHarvestDays" value="${plant.harvestDays}" min="1" required>
                 </div>
                 <div class="form-group full-width">
-                    <label>ตำแหน่ง (Layers) *</label>
-                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">เลือก Layer ที่จะปลูกพืชชนิดนี้ (เลือกได้หลาย Layer)</p>
-                    <div id="editPlantLayers" style="display: flex; gap: 10px; flex-wrap: wrap; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
-                        ${crop.layers.map(l => {
-                            const currentLayers = plant.location.replace('Layer ', '').replace('Layers ', '').split(', ');
-                            return `<label style="cursor: pointer;">
-                                <input type="checkbox" name="editPlantLayers" value="${l}" ${currentLayers.includes(l) ? 'checked' : ''}> Layer ${l}
-                            </label>`;
-                        }).join('')}
+                    <label>ตำแหน่ง (Zones & Layers) *</label>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">เลือก Layer ที่จะปลูกพืชชนิดนี้ (แยกตาม Zone)</p>
+                    <div id="editPlantLayers" style="display: flex; flex-direction: column; gap: 15px;">
+                        ${crop.zonesLayers ? 
+                            // New format: multiple zones with layers
+                            Object.entries(crop.zonesLayers).map(([zone, layers]) => `
+                                <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid #e0e0e0;">
+                                    <div style="font-weight: 600; margin-bottom: 10px; color: #333;">Zone ${zone}</div>
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap; padding-left: 10px;">
+                                        ${layers.map(l => `
+                                            <label style="cursor: pointer; padding: 8px 12px; background: white; border: 2px solid #ddd; border-radius: 6px;">
+                                                <input type="checkbox" name="editPlantLayers" value="${zone}-${l}" data-zone="${zone}" data-layer="${l}" ${currentLayers.includes(l) ? 'checked' : ''}> Layer ${l}
+                                            </label>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('')
+                            :
+                            // Old format: single zone (backward compatible)
+                            `<div style="padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid #e0e0e0;">
+                                <div style="font-weight: 600; margin-bottom: 10px; color: #333;">Zone ${crop.zone || 'A'}</div>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; padding-left: 10px;">
+                                    ${crop.layers.map(l => `
+                                        <label style="cursor: pointer; padding: 8px 12px; background: white; border: 2px solid #ddd; border-radius: 6px;">
+                                            <input type="checkbox" name="editPlantLayers" value="${crop.zone || 'A'}-${l}" data-zone="${crop.zone || 'A'}" data-layer="${l}" ${currentLayers.includes(l) ? 'checked' : ''}> Layer ${l}
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>`
+                        }
                     </div>
                 </div>
                 <div class="form-group">
@@ -1759,24 +2017,22 @@ function editPlant(projectId, cropId, plantId) {
                 
                 <div class="form-group full-width">
                     <label>ฟิลด์ข้อมูลที่จะเก็บ</label>
-                    <p style="color: #888; font-size: 0.9rem; margin-bottom: 10px;">หมายเหตุ: การแก้ไขฟิลด์ข้อมูลจะไม่ส่งผลกระทบต่อข้อมูลที่บันทึกไว้แล้ว</p>
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <button type="button" class="btn btn-secondary" onclick="addManualField()" style="flex: 1;">
-                            📝 + ฟิลด์ Manual
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="addAutoField()" style="flex: 1;">
-                            🤖 + ฟิลด์จาก Sensor
-                        </button>
-                    </div>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">
+                        หมายเหตุ: การแก้ไขฟิลด์ข้อมูลจะไม่ส่งผลกระทบต่อข้อมูลที่บันทึกไว้แล้ว
+                        <span style="color: #2196f3;">💡 ถ้าชื่อฟิลด์ตรงกับ Sensor จะมีตัวเลือกดึงข้อมูลอัตโนมัติ</span>
+                    </p>
+                    <button type="button" class="btn btn-secondary" onclick="addDataField()" style="margin-bottom: 15px;">
+                        + เพิ่มฟิลด์
+                    </button>
                     <div id="dataFieldsList" style="display: flex; flex-direction: column; gap: 10px;">
                         ${plant.dataFields.map(field => {
                             const fieldId = fieldIdCounter++;
-                            if (field.type === 'manual') {
+                            if (field.type === 'manual' || !field.canBeAuto) {
                                 return `
                                     <div class="field-item" data-field-id="${fieldId}" data-field-type="manual" data-field-name="${field.name}" data-field-unit="${field.unit}">
                                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8f9fa; border-radius: 8px; border: 2px solid #e0e0e0;">
                                             <div>
-                                                <strong>${field.name}</strong> (${field.unit}) - <span style="color: #666;">Manual</span>
+                                                <strong>${field.name}</strong> ${field.unit ? `(${field.unit})` : ''} - <span style="color: #666;">Manual</span>
                                             </div>
                                             <button type="button" onclick="removeField(this)" style="background: none; border: none; color: #ff4444; cursor: pointer; font-size: 1.2rem;">×</button>
                                         </div>
@@ -1784,7 +2040,7 @@ function editPlant(projectId, cropId, plantId) {
                                 `;
                             } else {
                                 return `
-                                    <div class="field-item" data-field-id="${fieldId}" data-field-type="auto" data-field-name="${field.name}" data-field-unit="${field.unit}" data-sensor-type="${field.sensor.sensorType}" data-controller-id="${field.sensor.controllerId}">
+                                    <div class="field-item" data-field-id="${fieldId}" data-field-type="auto" data-field-name="${field.name}" data-field-unit="${field.unit}" data-sensor-type="${field.sensor?.sensorType || ''}" data-controller-id="${field.sensor?.controllerId || ''}">
                                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f0f8ff; border-radius: 8px; border: 2px solid #185a9d;">
                                             <div>
                                                 <strong>${field.name}</strong> ${field.unit ? `(${field.unit})` : ''} - <span style="color: #185a9d;">🤖 Auto</span>
@@ -1816,8 +2072,20 @@ function updatePlant(event, projectId, cropId, plantId) {
     
     const plantName = document.getElementById('editPlantName').value;
     const harvestDays = parseInt(document.getElementById('editHarvestDays').value);
-    const location = document.getElementById('editPlantLayer').value;
     const quantity = parseInt(document.getElementById('editPlantQuantity').value);
+    
+    // Get selected layers (same as createPlant)
+    const selectedLayers = Array.from(document.querySelectorAll('input[name="editPlantLayers"]:checked'))
+        .map(cb => cb.dataset.layer);
+    
+    if (selectedLayers.length === 0) {
+        alert('กรุณาเลือก Layer อย่างน้อย 1 Layer');
+        return;
+    }
+    
+    const location = selectedLayers.length === 1 
+        ? `Layer ${selectedLayers[0]}` 
+        : `Layers ${selectedLayers.join(', ')}`;
     
     // Collect data fields
     const fieldItems = document.querySelectorAll('#dataFieldsList .field-item');
@@ -1846,12 +2114,13 @@ function updatePlant(event, projectId, cropId, plantId) {
     plant.name = plantName;
     plant.harvestDays = harvestDays;
     plant.displayName = `${plantName} ${harvestDays} วัน`;
-    plant.location = `Layer ${location}`;
+    plant.location = location;
     plant.quantity = quantity;
     plant.dataFields = dataFields;
     
     localStorage.setItem('farmlab_projects', JSON.stringify(projects));
     
+    alert('✅ แก้ไขพืชสำเร็จ');
     viewCrop(projectId, cropId);
 }
 
@@ -1874,12 +2143,8 @@ function deletePlant(projectId, cropId, plantId) {
     viewCrop(projectId, cropId);
 }
 
-// Navigation helpers
-function backToProject() {
-    if (currentProjectId) {
-        viewProject(currentProjectId);
-    }
-}
+// Navigation helpers (moved to projects/navigation.js)
+// function backToProject() - now in navigation.js
 
 function backToCrop() {
     if (currentProjectId && currentCropId) {
@@ -1967,4 +2232,87 @@ function deletePlant(projectId, cropId, plantId) {
     }
     
     viewCrop(projectId, cropId);
+}
+
+
+// View record images
+function viewRecordImages(recordId, plantId) {
+    // Find the record
+    let record = null;
+    let plant = null;
+    
+    for (const project of projects) {
+        for (const crop of project.crops) {
+            for (const p of crop.plants) {
+                if (p.id === plantId) {
+                    plant = p;
+                    record = p.records?.find(r => r.id === recordId);
+                    break;
+                }
+            }
+            if (record) break;
+        }
+        if (record) break;
+    }
+    
+    if (!record || !record.images || record.images.length === 0) {
+        alert('ไม่พบรูปภาพ');
+        return;
+    }
+    
+    // Create modal
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px;';
+    modal.onclick = (e) => {
+        if (e.target === modal) modal.remove();
+    };
+    
+    const stageLabels = {
+        'germination': 'เพาะเมล็ด',
+        'seedling': 'ต้นกล้า',
+        'vegetative': 'เติบโต',
+        'mature': 'โตเต็มที่',
+        'harvest': 'เก็บเกี่ยว'
+    };
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 12px; padding: 30px; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <h3 style="margin: 0;">รูปภาพ - ${plant.displayName}</h3>
+                    <p style="color: #666; margin: 5px 0 0 0;">
+                        ${new Date(record.date).toLocaleDateString('th-TH')} ${record.time} | 
+                        ${stageLabels[record.stage] || record.stage || '-'}
+                    </p>
+                </div>
+                <button onclick="this.closest('div[style*=fixed]').remove()" style="background: none; border: none; font-size: 2rem; cursor: pointer; color: #999; line-height: 1;">×</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+                ${record.images.map((img, index) => `
+                    <div style="border: 2px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                        <div style="position: relative; padding-top: 100%; background: #f5f5f5;">
+                            <img src="${img.url}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" alt="Image ${index + 1}">
+                            <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">
+                                ${img.source === 'camera' ? '🤖 กล้อง' : '📷 คน'}
+                            </div>
+                        </div>
+                        <div style="padding: 10px; background: white;">
+                            <div style="font-size: 0.85rem; color: #666;">
+                                ${new Date(img.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            ${record.notes ? `
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <strong>หมายเหตุ:</strong> ${record.notes}
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
 }

@@ -1,0 +1,61 @@
+# ไฟล์ข้อมูลการทดลอง - ไม่ต้องขึ้น Git
+# Research Data Files - Do not commit
+
+# Excel files ในโฟลเดอร์ data
+ideas/v3/data/**/*.xlsx
+ideas/v3/data/**/*.xls
+ideas/v3/data/**/*.csv
+
+# รูปภาพในโฟลเดอร์การทดลอง
+ideas/v3/data/การทดลอง/รูป*/
+ideas/v3/data/การทดลอง/**/*.jpg
+ideas/v3/data/การทดลอง/**/*.jpeg
+ideas/v3/data/การทดลอง/**/*.png
+ideas/v3/data/การทดลอง/**/*.gif
+ideas/v3/data/การทดลอง/**/*.bmp
+
+# ผลลัพธ์การวิเคราะห์
+analysis_results/
+ideas/v3/analysis/
+ideas/v3/data/การทดลอง/analysis_results/
+
+# Script วิเคราะห์ข้อมูล
+analyze_research_data.py
+
+# Kiro
+.kiro/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+~$*.xlsx
+~$*.xls

@@ -1,6 +1,8 @@
 // Sample data for the application
 
 // Force reload sample data
+// เปลี่ยนเป็น true เพื่อโหลดข้อมูลตัวอย่างใหม่
+// เปลี่ยนเป็น false เมื่อต้องการใช้ข้อมูลจาก localStorage
 const FORCE_RELOAD = true;
 
 // Greenhouses data
@@ -174,7 +176,10 @@ const PLANT_TYPES = [
 ];
 
 // Projects data (โครงสร้างใหม่)
-let projects = [
+let projects = JSON.parse(localStorage.getItem('farmlab_projects')) || [];
+
+if (projects.length === 0 || FORCE_RELOAD) {
+    projects = [
     {
         id: 1,
         name: 'การทดลองพืชผักใบ 4 ชนิด (ตั้งโอ๋, เคล, Sorrel, Frillice)',
@@ -215,6 +220,7 @@ let projects = [
                                 id: 1,
                                 date: '2025-11-01',
                                 time: '09:00',
+                                stage: 'seedling',
                                 plantData: { 'ความสูง': 8.5, 'จำนวนใบ': 4, 'น้ำหนัก': 120.5, 'ความกว้างใบ': 5.2, 'ทรงพุ่ม': 10.0, 'สีใบ': 'เขียวอ่อน' },
                                 environmentData: { temperature: 24, humidity: 68, ppfd: 275, co2: 880, ec: 1.9, ph: 6.0 },
                                 images: [
@@ -228,6 +234,7 @@ let projects = [
                                 id: 2,
                                 date: '2025-11-03',
                                 time: '10:15',
+                                stage: 'vegetative',
                                 plantData: { 'ความสูง': 9.2, 'จำนวนใบ': 5, 'น้ำหนัก': 135.0, 'ความกว้างใบ': 5.8, 'ทรงพุ่ม': 11.5, 'สีใบ': 'เขียวอ่อน' },
                                 environmentData: { temperature: 23, humidity: 70, ppfd: 280, co2: 900, ec: 1.8, ph: 5.9 },
                                 images: [
@@ -240,6 +247,7 @@ let projects = [
                                 id: 3,
                                 date: '2025-11-05',
                                 time: '14:30',
+                                stage: 'mature',
                                 plantData: { 'ความสูง': 10.5, 'จำนวนใบ': 6, 'น้ำหนัก': 155.5, 'ความกว้างใบ': 6.5, 'ทรงพุ่ม': 13.0, 'สีใบ': 'เขียวเข้ม' },
                                 environmentData: { temperature: 25, humidity: 65, ppfd: 285, co2: 920, ec: 1.7, ph: 6.1 },
                                 images: [
@@ -889,3 +897,7 @@ let projects = [
         ]
     }
 ];
+
+    // บันทึก projects ลง localStorage
+    localStorage.setItem('farmlab_projects', JSON.stringify(projects));
+}

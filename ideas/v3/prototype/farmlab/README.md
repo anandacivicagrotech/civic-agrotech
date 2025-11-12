@@ -1,88 +1,131 @@
-# FarmLab Prototype - โครงสร้างไฟล์ใหม่
+# 🌱 FarmLab Prototype
+
+แพลตฟอร์มบันทึกและจัดการข้อมูลการทดลองฟาร์ม สำหรับนักวิจัย/เกษตรกร
+
+## 🚀 Quick Start
+
+1. เปิดไฟล์ [index.html](index.html) ในเบราว์เซอร์
+2. ดูเอกสารเพิ่มเติมที่ [docs/](docs/)
 
 ## 📁 โครงสร้างโปรเจค
 
 ```
-ideas/v3/prototype/
-├── index.html              # หน้าหลัก (HTML structure)
+farmlab/
+├── index.html              # หน้าหลัก
+├── README.md              # (ไฟล์นี้)
+├── PLAN.md                # แผนการพัฒนา
+├── CHANGELOG.md           # ประวัติการเปลี่ยนแปลง
+│
 ├── css/
-│   └── styles.css         # CSS ทั้งหมด
+│   └── styles.css         # สไตล์ทั้งหมด
+│
 ├── js/
-│   ├── data.js            # ข้อมูล sample (greenhouses, projects)
-│   ├── app.js             # ฟังก์ชันหลัก + navigation
-│   ├── dashboard.js       # Dashboard tab (Phase 5)
-│   ├── projects.js        # Projects tab
-│   ├── data-entry.js      # Data Entry tab
-│   └── greenhouses.js     # Greenhouses tab
-└── README.md              # เอกสารนี้
+│   ├── app.js             # Core: Navigation & Tabs
+│   ├── data.js            # Core: Data Store
+│   ├── dashboard.js       # Dashboard tab
+│   │
+│   ├── utils/             # 🔧 Shared Utilities
+│   │   ├── index.js
+│   │   ├── helpers.js     # General helpers
+│   │   ├── date.js        # Date formatting
+│   │   └── storage.js     # localStorage wrapper
+│   │
+│   ├── projects/          # 📁 Projects Module
+│   │   ├── index.js       # Entry point
+│   │   ├── state.js       # State management
+│   │   ├── navigation.js  # Navigation logic
+│   │   └── (+ old files)  # TODO: refactor
+│   │
+│   ├── data-entry/        # 📝 Data Entry Module
+│   │   ├── index.js
+│   │   └── (+ old files)  # TODO: refactor
+│   │
+│   ├── greenhouses/       # 🏠 Greenhouses Module
+│   │   ├── index.js
+│   │   └── (+ old files)  # TODO: refactor
+│   │
+│   ├── projects.js        # (Old - รอ refactor)
+│   ├── data-entry.js      # (Old - รอ refactor)
+│   └── greenhouses.js     # (Old - รอ refactor)
+│
+├── docs/                  # 📚 เอกสารทั้งหมด
+│   ├── README.md          # สารบัญเอกสาร
+│   ├── overview.md        # ภาพรวมโครงการ
+│   ├── architecture.md    # โครงสร้างและ data flow
+│   └── phase-*.md         # รายละเอียดแต่ละ phase
+│
+└── sample-records.json    # ข้อมูลตัวอย่าง
 ```
 
-## 🎯 การแยกไฟล์
+## 🎯 สถานะปัจจุบัน
 
-### 1. **index.html**
-- โครงสร้าง HTML หลัก
-- Header และ Navigation
-- Container สำหรับแต่ละ Tab
-- โหลด CSS และ JavaScript ทั้งหมด
+### ✅ เสร็จแล้ว
+- Phase 0-4: พื้นฐาน, โรงเรือน, โครงการ, บันทึกข้อมูล
+- โครงสร้างแบบ modules (state, utils, navigation)
 
-### 2. **css/styles.css**
-- CSS ทั้งหมดรวมอยู่ในไฟล์เดียว
-- Responsive design
-- Component styles (buttons, cards, forms, etc.)
+### 🔄 กำลังปรับปรุง
+- แยก projects.js, greenhouses.js, data-entry.js ออกเป็น modules ย่อย
 
-### 3. **js/data.js**
-- ข้อมูล sample greenhouses
-- ข้อมูล sample projects
-- localStorage management
+### 📋 รอทำ
+- Phase 5: Dashboard (สถิติและกราฟ)
+- Phase 6: Gallery (แกลเลอรี่รูปภาพ)
 
-### 4. **js/app.js**
-- ฟังก์ชัน `showTab()` สำหรับสลับ tab
-- Initialization code
-- Global navigation functions
+## 📚 เอกสาร
 
-### 5. **js/dashboard.js**
-- Dashboard functionality (Phase 5)
-- ยังไม่ได้พัฒนา
+- [PLAN.md](PLAN.md) - แผนการพัฒนา
+- [CHANGELOG.md](CHANGELOG.md) - ประวัติการเปลี่ยนแปลง
+- [docs/overview.md](docs/overview.md) - ภาพรวมโครงการ
+- [docs/architecture.md](docs/architecture.md) - สถาปัตยกรรม
 
-### 6. **js/projects.js**
-- จัดการโครงการ (Projects Management)
-- สร้างโครงการใหม่
-- ดูรายละเอียดโครงการ, รอบ, พืช
-- เชื่อมต่อกับ IoT devices
+## 🔧 การปรับปรุงโครงสร้าง
 
-### 7. **js/data-entry.js**
-- บันทึกข้อมูลการเติบโตของพืช
-- อัพโหลดรูปภาพ
-- Template-based data entry
+### ทำไมต้องแยก modules?
 
-### 8. **js/greenhouses.js**
-- จัดการโรงเรือน (Greenhouses Management)
-- จัดการอุปกรณ์ (Controllers, Cameras)
-- Zone และ Layer management
+1. **ประหยัด Token** - แยกไฟล์ใหญ่ (2,000+ บรรทัด) เป็นไฟล์เล็ก (100-300 บรรทัด)
+2. **อ่านง่าย** - แยกตาม responsibility (state, UI, forms, details)
+3. **บำรุงรักษา** - แก้ไขได้ง่าย ไม่ต้องโหลดไฟล์ใหญ่ทั้งหมด
 
-## 🚀 วิธีใช้งาน
+### โครงสร้างใหม่
 
-1. เปิดไฟล์ `index.html` ในเบราว์เซอร์
-2. ระบบจะโหลด CSS และ JavaScript ทั้งหมดอัตโนมัติ
-3. ข้อมูล sample จะถูกโหลดจาก localStorage (หรือสร้างใหม่ถ้ายังไม่มี)
+แต่ละ module มี:
+- `index.js` - Entry point & documentation
+- `state.js` - State management (ถ้ามี)
+- `*.js` - ฟีเจอร์ย่อยๆ (list, forms, details)
 
-## ✨ ข้อดีของโครงสร้างใหม่
+### Utils ที่ใช้ร่วมกัน
 
-1. **แยกไฟล์ชัดเจน** - แต่ละเมนูอยู่ในไฟล์ของตัวเอง
-2. **ง่ายต่อการแก้ไข** - แก้ไขเฉพาะส่วนที่ต้องการ
-3. **ง่ายต่อการ debug** - หาปัญหาได้เร็วขึ้น
-4. **Maintainable** - เพิ่มฟีเจอร์ใหม่ได้ง่าย
-5. **Scalable** - ขยายระบบได้ในอนาคต
+```javascript
+// helpers.js
+Utils.generateId()
+Utils.formatNumber()
+Utils.isEmpty()
 
-## 📝 หมายเหตุ
+// date.js
+DateUtils.formatDate()
+DateUtils.formatDateShort()
+DateUtils.getTodayString()
 
-- ไฟล์เดิม `farmlab.html` ยังคงอยู่ (ไม่ได้ลบ)
-- โครงสร้างใหม่นี้ใช้งานได้เหมือนเดิมทุกประการ
-- ข้อมูลถูกเก็บใน localStorage เหมือนเดิม
+// storage.js
+StorageUtils.save()
+StorageUtils.load()
+```
 
-## 🔄 การอัพเดทในอนาคต
+## 🎓 คำศัพท์สำคัญ
 
-- เพิ่ม Dashboard (Phase 5)
-- เพิ่มฟีเจอร์ดูรายละเอียด Crop
-- เพิ่มฟีเจอร์ Device Dashboard
-- เพิ่มกราฟและ Analytics
+- **Project** = โครงการวิจัย/ทดลอง
+- **Crop** = รอบการปลูก
+- **Plant** = ต้นพืชแต่ละต้น
+- **Record** = ข้อมูลการบันทึก
+- **Greenhouse** = โรงเรือน
+- **Zone** = โซนในโรงเรือน
+- **Layer** = ชั้นปลูก
+
+## 💡 Tips
+
+- เปิด DevTools Console เพื่อดู logs การโหลด modules
+- ไฟล์เดิม (projects.js, greenhouses.js) ยังใช้งานได้ปกติ
+- ค่อยๆ refactor ฟังก์ชันไปยัง modules ใหม่ทีละน้อย
+
+---
+
+**อัพเดท:** 12 พฤศจิกายน 2025

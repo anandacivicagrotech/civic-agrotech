@@ -6,10 +6,26 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize all tabs
     try {
-        renderProjects();
-        renderDataEntryForm();
-        renderGreenhousesTab();
-        renderGreenhouses();
+        loadDashboard();
+
+        // renderProjects will be called when user clicks Projects tab
+        // (because showProjectsList might not be loaded yet)
+        if (typeof renderProjects === 'function') {
+            renderProjects();
+        }
+
+        if (typeof renderDataEntryForm === 'function') {
+            renderDataEntryForm();
+        }
+
+        if (typeof renderGreenhousesTab === 'function') {
+            renderGreenhousesTab();
+        }
+
+        if (typeof renderGreenhouses === 'function') {
+            renderGreenhouses();
+        }
+
         console.log('All tabs initialized successfully');
     } catch (error) {
         console.error('Error initializing tabs:', error);
@@ -36,7 +52,11 @@ function showTab(tabName) {
         loadDashboard();
     } else if (tabName === 'projects') {
         // Reset to projects list
-        showProjectsList();
+        if (typeof showProjectsList === 'function') {
+            showProjectsList();
+        } else {
+            console.warn('showProjectsList not yet loaded');
+        }
     } else if (tabName === 'data') {
         // Data entry already rendered
     } else if (tabName === 'greenhouses') {
@@ -44,7 +64,4 @@ function showTab(tabName) {
     }
 }
 
-// Placeholder for dashboard
-function loadDashboard() {
-    console.log('Dashboard - กำลังพัฒนาใน Phase 5');
-}
+// Dashboard is now implemented in dashboard.js
