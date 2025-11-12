@@ -204,7 +204,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 8,
                         records: [
@@ -259,7 +262,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 7,
                         records: [
@@ -300,7 +306,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 6,
                         records: [
@@ -341,7 +350,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 6,
                         records: [
@@ -395,7 +407,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 5,
                         records: []
@@ -410,7 +425,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 6,
                         records: []
@@ -425,7 +443,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 4,
                         records: []
@@ -440,7 +461,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 3,
                         records: []
@@ -468,7 +492,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 0,
                         records: []
@@ -483,7 +510,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 0,
                         records: []
@@ -498,7 +528,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 0,
                         records: []
@@ -513,7 +546,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 0,
                         records: []
@@ -551,7 +587,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 6,
                         records: [
@@ -592,7 +631,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 5,
                         records: [
@@ -646,7 +688,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 0,
                         records: []
@@ -661,7 +706,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 0,
                         records: []
@@ -704,7 +752,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 7,
                         records: [
@@ -745,7 +796,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 6,
                         records: [
@@ -804,7 +858,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 0,
                         records: []
@@ -819,7 +876,10 @@ let projects = [
                         dataFields: [
                             { id: 1, name: 'ความสูง', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
                             { id: 2, name: 'จำนวนใบ', unit: 'ใบ', type: 'manual', canBeAuto: false, sensor: null },
-                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null }
+                            { id: 3, name: 'น้ำหนัก', unit: 'g', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 4, name: 'ความกว้างใบ', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 5, name: 'ทรงพุ่ม', unit: 'cm', type: 'manual', canBeAuto: false, sensor: null },
+                            { id: 6, name: 'สีใบ', unit: '', type: 'manual', canBeAuto: false, sensor: null }
                         ],
                         recordCount: 0,
                         records: []
